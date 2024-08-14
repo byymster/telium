@@ -19,22 +19,22 @@ class AddressBook(UserDict):
     def delete(self, name):
         del self.data[name]
 
-    def get_upcoming_birthdays(self) -> list[dict[str, str]]:
+    def get_upcoming_birthdays(self, days) -> list[dict[str, str]]:
         upcoming_birthdays = []
         today = datetime.now()
         for user in self.data.values():
-            birthday_this_year = datetime.strptime(
-                f'{today.year}.{user.birthday.value.month}.{user.birthday.value.day}', "%Y.%m.%d")
-            difference = (birthday_this_year - today).days
+            if user.birthday and user.birthday.value:
+                birthday_this_year = datetime.strptime(
+                    f'{user.birthday.value.day}.{user.birthday.value.month}.{today.year}', "%d.%m.%Y")
+                difference = (birthday_this_year - today).days
 
-            if 0 <= difference <= 7:
-                if birthday_this_year.weekday() >= 5:
-                    birthday_this_year += timedelta(days=(7 - birthday_this_year.weekday()))
-                upcoming_birthdays.append({
-                    'name': user.name.value,
-                    'congratulation_date': birthday_this_year.strftime('%Y.%m.%d')
-                })
-
+                if 0 <= difference <= days:
+                    if birthday_this_year.weekday() >= 5:
+                        birthday_this_year += timedelta(days=(7 - birthday_this_year.weekday()))
+                    upcoming_birthdays.append({
+                        'name': user.name.value,
+                        'congratulation_date': birthday_this_year.strftime('%d.%m.%Y')
+                    })
         return upcoming_birthdays
 
     @input_error
@@ -63,11 +63,11 @@ class AddressBook(UserDict):
     def show_birthday(self, args):
         name = args[0]
         record = self.find(name)
-        return record.birthday
+        return record.birthday.value.strftime('%d.%m.%Y')
 
     @input_error
-    def birthdays(self):
-        upcoming_birthdays = self.get_upcoming_birthdays()
+    def birthdays(self, args):
+        upcoming_birthdays = self.get_upcoming_birthdays(args)
         if not upcoming_birthdays:
             return "No upcoming birthdays."
         return "\n".join([f"{data['name']} - {data['congratulation_date']}" for data in upcoming_birthdays])

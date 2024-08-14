@@ -28,7 +28,8 @@ def main():
                 case 'show-birthday':
                     print(contacts.show_birthday(args))
                 case 'birthdays':
-                    print(contacts.birthdays())
+                    days = int(args[0]) if args else 7
+                    print(contacts.birthdays(days))
                 case 'help':
                     print("""
                     Available commands:
