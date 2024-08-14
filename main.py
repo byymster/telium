@@ -28,7 +28,8 @@ def main():
                 case 'show-birthday':
                     print(contacts.show_birthday(args))
                 case 'birthdays':
-                    print(contacts.birthdays())
+                    days = int(args[0]) if args else 7
+                    print(contacts.birthdays(days))
                 case 'help':
                     print("""
                     Available commands:
@@ -39,7 +40,7 @@ def main():
                         all - List all contacts.
                         add-birthday <username> <birthday> - Add birthday to a contact.
                         show-birthday <username> - Show birthday of a contact.
-                        birthdays - Show upcoming birthdays.
+                        birthdays <days> - Show upcoming birthdays, if <days> are empty it will show upcoming birthdays for 1 week.
                     """)
                 case _:
                     print("Invalid command.")
