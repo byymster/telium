@@ -40,7 +40,7 @@ def main():
                         all - List all contacts.
                         add-birthday <username> <birthday> - Add birthday to a contact.
                         show-birthday <username> - Show birthday of a contact.
-                        birthdays - Show upcoming birthdays.
+                        birthdays <days> - Show upcoming birthdays, if <days> are empty it will show upcoming birthdays for 1 week.
                     """)
                 case _:
                     print("Invalid command.")
