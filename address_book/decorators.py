@@ -1,17 +1,34 @@
+DEFAULT_ERRORS = {
+    ValueError: "Give me correct values.\nType 'help' to see available commands.",
+    IndexError: "Invalid number of arguments.\nType 'help' to see available commands."
+}
+
 def input_error(errors=None):
     if errors is None:
-        errors = dict()
+        errors = {}
+    combined_errors = {**DEFAULT_ERRORS, **errors}
 
     def decorator(func):
         def inner(*args, **kwargs):
             try:
-                return func(*args, **kwargs)
-            except ValueError:
-                return "Give me correct values.\nType 'help' to see available commands." \
-                    if errors.get(ValueError) is None else errors[ValueError]
-            except IndexError:
-                return "Invalid number of arguments.\nType 'help' to see available commands." \
-                    if errors.get(IndexError) is None else errors[IndexError]
+                gen = func(*args, **kwargs)
+                if hasattr(gen, '__iter__') and hasattr(gen, '__next__'):
+                    # Handle generator
+                    try:
+                        value = next(gen)
+                        while True:
+                            try:
+                                sent_value = yield value
+                                value = gen.send(sent_value)
+                            except StopIteration:
+                                break
+                    except (ValueError, IndexError) as e:
+                        error_message = combined_errors.get(type(e), str(e))
+                        yield error_message
+                else:
+                    return gen
+            except (ValueError, IndexError) as e:
+                return combined_errors.get(type(e), str(e))
 
         return inner
 

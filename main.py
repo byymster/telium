@@ -1,4 +1,5 @@
 from address_book.data_manager import DataManager
+from address_book.notes import NOT_FOUND_MESSAGE as NOTE_NOT_FOUND_MESSAGE
 from address_book.utils import parse_input, DUMP_FILE, pretty_print
 
 
@@ -43,6 +44,18 @@ def main():
                     pretty_print(notes.all())
                 case 'all-notes-tags':
                     pretty_print(notes.all_tags())
+                case 'sort-notes':
+                    direction = args[0] if args else "asc"
+                    pretty_print(notes.sort_by_tags(direction))
+                case 'change-note':
+                    change_gen = notes.change_note(args)
+                    current_content = next(change_gen)
+                    if current_content != NOTE_NOT_FOUND_MESSAGE:
+                        print(f"Current content: {current_content}")
+                        new_content = input("Enter new content: ")
+                        print(change_gen.send(new_content))
+                    else:
+                        print(current_content)
                 case 'help':
                     print("""
                     Available commands:
@@ -59,6 +72,7 @@ def main():
                         delete-note <id> - Delete a note by title. 
                         all-notes - List all notes.
                         all-notes-tags - List all unique tags.
+                        sort-notes <direction> - Sort notes by tags in ascending or descending order.
                     """)
                 case _:
                     print("Invalid command.")

@@ -2,6 +2,8 @@ from collections import UserList
 from address_book.decorators import input_error
 from address_book.utils import Printable
 
+NOT_FOUND_MESSAGE = "Note not found."
+
 
 class Note(Printable):
     def __init__(self, note_id: int, content: str):
@@ -35,7 +37,7 @@ class Notes(UserList):
             return [note for note in self.data if needle.lower() in note.tags]
         return [note for note in self.data if needle.lower() in note.content.lower()]
 
-    @input_error({IndexError: "Note not found."})
+    @input_error({IndexError: NOT_FOUND_MESSAGE})
     def delete(self, note_id: str):
         del self.data[int(note_id) - 1]
         return f"Note {note_id} was deleted."
@@ -48,3 +50,19 @@ class Notes(UserList):
         for note in self.data:
             tags.update(note.tags)
         return tags
+
+    def sort_by_tags(self, direction="asc"):
+        reverse = direction == "desc"
+        return sorted(self.data,
+                      key=lambda note: sorted(note.tags, reverse=reverse)[0] if note.tags else "",
+                      reverse=reverse)
+
+    @input_error({IndexError: NOT_FOUND_MESSAGE})
+    def change_note(self, args):
+        note_id = int(args[0])
+        note = self.data[note_id - 1]
+        current_content = note.content
+        new_content = yield current_content
+        note.content = new_content
+        note.tags = Note.extract_hashtags(new_content)
+        yield f"Note {note_id} was updated."
