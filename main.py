@@ -40,6 +40,7 @@ def main():
                         phone <username> - Get phone number of a contact.
                         all - List all contacts.
                         add-birthday <username> <birthday> - Add birthday to a contact.
+                        add-email <username> <email> - Add email to a contact.
                         show-birthday <username> - Show birthday of a contact.
                         birthdays - Show upcoming birthdays.
                     """)
