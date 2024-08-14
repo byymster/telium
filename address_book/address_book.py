@@ -72,6 +72,15 @@ class AddressBook(UserDict):
             return "No upcoming birthdays."
         return "\n".join([f"{data['name']} - {data['congratulation_date']}" for data in upcoming_birthdays])
 
+    @input_error
+    def add_email(self, args):
+        name, email = args
+        record = self.find(name)
+        if not isinstance(record, Record):
+            return record
+        record.add_email(email)
+        return f"Email {email} was added to contact {name}."
+
     def load(self):
         try:
             with open(DUMP_FILE, "rb") as file:

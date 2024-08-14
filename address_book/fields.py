@@ -1,4 +1,5 @@
 from datetime import datetime
+import re
 
 class Field:
     def __init__(self, value):
@@ -27,3 +28,15 @@ class Phone(Field):
     @staticmethod
     def _validate(phone_number):
         return phone_number.isdigit() and len(phone_number) == 10
+
+class Email(Field):
+    def __init__(self, value):
+        if self.validate_email(value):
+            super().__init__(value)
+        else:
+            raise ValueError("Invalid email format. Please use a correct email address.")
+
+    @staticmethod
+    def validate_email(email):
+        email_regex = r"(^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$)"
+        return re.match(email_regex, email) is not None

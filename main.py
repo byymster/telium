@@ -29,6 +29,8 @@ def main():
                     print(contacts.show_birthday(args))
                 case 'birthdays':
                     print(contacts.birthdays())
+                case 'add-email':
+                    print(contacts.add_email(args))
                 case 'help':
                     print("""
                     Available commands:
