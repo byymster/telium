@@ -19,7 +19,7 @@ class AddressBook(UserDict):
     def delete(self, name):
         del self.data[name]
 
-    def get_upcoming_birthdays(self, days) -> list[dict[str, str]]:
+    def get_upcoming_birthdays(self, days: int) -> list[dict[str, str]]:
         upcoming_birthdays = []
         today = datetime.now()
         for user in self.data.values():
