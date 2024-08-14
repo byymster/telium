@@ -1,9 +1,11 @@
-from address_book.address_book import AddressBook
-from address_book.utils import parse_input
+from address_book.data_manager import DataManager
+from address_book.notes import NOT_FOUND_MESSAGE as NOTE_NOT_FOUND_MESSAGE
+from address_book.utils import parse_input, DUMP_FILE, pretty_print
+
 
 def main():
-    contacts = AddressBook()
-    contacts.load()
+    data_manager = DataManager(DUMP_FILE)
+    contacts, notes = data_manager.load_data()
     print("Welcome to the assistant bot!")
     while True:
         try:
@@ -34,6 +36,31 @@ def main():
                     print(contacts.add_email(args))
                 case 'add-address':
                     print(contacts.add_address(args))
+                case 'add-note':
+                    content = ''
+                    while content == '':
+                        content = input("Enter note content: ")
+                    print(notes.add_note(content))
+                case 'find-note':
+                    pretty_print(notes.find(*args))
+                case 'delete-note':
+                    print(notes.delete(*args))
+                case 'all-notes':
+                    pretty_print(notes.all())
+                case 'all-notes-tags':
+                    pretty_print(notes.all_tags())
+                case 'sort-notes':
+                    direction = args[0] if args else "asc"
+                    pretty_print(notes.sort_by_tags(direction))
+                case 'change-note':
+                    change_gen = notes.change_note(args)
+                    current_content = next(change_gen)
+                    if current_content != NOTE_NOT_FOUND_MESSAGE:
+                        print(f"Current content: {current_content}")
+                        new_content = input("Enter new content: ")
+                        print(change_gen.send(new_content))
+                    else:
+                        print(current_content)
                 case 'help':
                     print("""
                     Available commands:
@@ -47,12 +74,21 @@ def main():
                         add-address <username> <your address with spaces> - Add address to a contact.
                         show-birthday <username> - Show birthday of a contact.
                         birthdays <days> - Show upcoming birthdays, if <days> are empty it will show upcoming birthdays for 1 week.
+                        add-note - Add a new note. 
+                        find-note <needle> - Find notes containing a substring. 
+                        delete-note <id> - Delete a note by title. 
+                        all-notes - List all notes.
+                        all-notes-tags - List all unique tags.
+                        sort-notes <direction> - Sort notes by tags in ascending or descending order.
                     """)
                 case _:
                     print("Invalid command.")
         except ValueError as e:
             print(e)
-    contacts.save()
+        except KeyboardInterrupt:
+            print("\nGood bye!")
+            break
+    data_manager.save_data(contacts.data, notes.data)
 
 if __name__ == "__main__":
     main()

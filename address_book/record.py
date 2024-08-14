@@ -1,6 +1,8 @@
 from .fields import Name, Phone, Birthday, Email, Address
+from .utils import Printable
 
-class Record:
+
+class Record(Printable):
     def __init__(self, name):
         self.name = Name(name)
         self.phones = []
