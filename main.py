@@ -1,9 +1,10 @@
-from address_book.address_book import AddressBook
-from address_book.utils import parse_input
+from address_book.data_manager import DataManager
+from address_book.utils import parse_input, DUMP_FILE, pretty_print
+
 
 def main():
-    contacts = AddressBook()
-    contacts.load()
+    data_manager = DataManager(DUMP_FILE)
+    contacts, notes = data_manager.load_data()
     print("Welcome to the assistant bot!")
     while True:
         try:
@@ -29,6 +30,19 @@ def main():
                     print(contacts.show_birthday(args))
                 case 'birthdays':
                     print(contacts.birthdays())
+                case 'add-note':
+                    content = ''
+                    while content == '':
+                        content = input("Enter note content: ")
+                    print(notes.add_note(content))
+                case 'find-note':
+                    pretty_print(notes.find(*args))
+                case 'delete-note':
+                    print(notes.delete(*args))
+                case 'all-notes':
+                    pretty_print(notes.all())
+                case 'all-notes-tags':
+                    pretty_print(notes.all_tags())
                 case 'help':
                     print("""
                     Available commands:
@@ -40,12 +54,20 @@ def main():
                         add-birthday <username> <birthday> - Add birthday to a contact.
                         show-birthday <username> - Show birthday of a contact.
                         birthdays - Show upcoming birthdays.
+                        add-note - Add a new note. 
+                        find-note <needle> - Find notes containing a substring. 
+                        delete-note <id> - Delete a note by title. 
+                        all-notes - List all notes.
+                        all-notes-tags - List all unique tags.
                     """)
                 case _:
                     print("Invalid command.")
         except ValueError as e:
             print(e)
-    contacts.save()
+        except KeyboardInterrupt:
+            print("\nGood bye!")
+            break
+    data_manager.save_data(contacts.data, notes.data)
 
 if __name__ == "__main__":
     main()
