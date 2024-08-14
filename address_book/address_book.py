@@ -8,9 +8,15 @@ from datetime import datetime, timedelta
 class AddressBook(UserDict):
     @input_error
     def add_record(self, args):
-        record = Record(args[0])
-        record.add_phone(args[1])
-        self.data[record.name.value] = record
+        name, *phones = args 
+        record = self.find(name)
+        if not isinstance(record, Record):
+            record = Record(name)
+            self.data[record.name.value] = record
+            
+        for phone in phones:
+            record.add_phone(phone)
+            
         return f"Contact {record.name.value} was added."
 
     def find(self, name):
