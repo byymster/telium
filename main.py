@@ -31,6 +31,8 @@ def main():
                     print(contacts.birthdays())
                 case 'add-email':
                     print(contacts.add_email(args))
+                case 'add-address':
+                    print(contacts.add_address(args))
                 case 'help':
                     print("""
                     Available commands:
@@ -41,6 +43,7 @@ def main():
                         all - List all contacts.
                         add-birthday <username> <birthday> - Add birthday to a contact.
                         add-email <username> <email> - Add email to a contact.
+                        add-address <username> <your address with spaces> - Add address to a contact.
                         show-birthday <username> - Show birthday of a contact.
                         birthdays - Show upcoming birthdays.
                     """)

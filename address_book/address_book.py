@@ -81,6 +81,17 @@ class AddressBook(UserDict):
         record.add_email(email)
         return f"Email {email} was added to contact {name}."
 
+    @input_error
+    def add_address(self, args):
+        name = args[0]
+        address = " ".join(args[1:])
+        record = self.find(name)
+        if not isinstance(record, Record):
+            return record
+
+        record.add_address(address)
+        return f"Address '{address}' was added to contact '{name}'."
+
     def load(self):
         try:
             with open(DUMP_FILE, "rb") as file:

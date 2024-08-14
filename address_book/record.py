@@ -1,4 +1,4 @@
-from .fields import Name, Phone, Birthday, Email
+from .fields import Name, Phone, Birthday, Email, Address
 
 class Record:
     def __init__(self, name):
@@ -6,6 +6,7 @@ class Record:
         self.phones = []
         self.birthday = None
         self.email = []
+        self.address = []
 
     def add_phone(self, phone):
         self.phones.append(Phone(phone))
@@ -31,9 +32,13 @@ class Record:
         self.birthday = Birthday(birthday)
 
     def add_email(self, email):
-        self.email.append(Email(email)) 
+        self.email.append(Email(email))
+
+    def add_address(self, address):
+        self.address.append(Address(address))
 
     def __str__(self):
         birthday_data = f", birthday: {self.birthday}" if self.birthday else ""
         email_data = f", email: {', '.join(p.value for p in self.email)}" if self.email else ""
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}{birthday_data}{email_data}"
+        address_data = f", address: {', '.join(p.value for p in self.address)}" if self.address else ""
+        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}{birthday_data}{email_data}{address_data}"

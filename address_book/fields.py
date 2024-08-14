@@ -40,3 +40,14 @@ class Email(Field):
     def validate_email(email):
         email_regex = r"(^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$)"
         return re.match(email_regex, email) is not None
+
+class Address(Field):
+    def __init__(self, value):
+        if self.validate_address(value):
+            super().__init__(value)
+        else:
+            raise ValueError("Address cannot be empty.")
+
+    @staticmethod
+    def validate_address(address):
+        return bool(address and address.strip())
