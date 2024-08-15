@@ -1,3 +1,4 @@
+from os import makedirs
 from pathlib import PurePath
 
 from platformdirs import user_data_dir
@@ -8,9 +9,12 @@ from address_book.utils import DUMP_FILE
 from address_book.utils import parse_input
 from address_book.utils import pretty_print
 
+APP_NAME = 'Telium'
+
 
 def main():
-    user_data_directory = user_data_dir('Telium', 'Telium')
+    user_data_directory = user_data_dir(APP_NAME, APP_NAME)
+    makedirs(user_data_directory, exist_ok=True)
     file_path = PurePath(user_data_directory).joinpath(DUMP_FILE)
     data_manager = DataManager(file_path)
     contacts, notes = data_manager.load_data()
