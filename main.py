@@ -25,6 +25,8 @@ def main():
                     print(contacts.find(args[0]))
                 case 'all':
                     print(contacts.all())
+                case 'search':
+                    print(contacts.search(args))
                 case 'add-birthday':
                     print(contacts.add_birthday(args))
                 case 'show-birthday':

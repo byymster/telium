@@ -4,7 +4,7 @@ from .decorators import input_error
 from datetime import datetime, timedelta
 
 class AddressBook(UserDict):
-    @input_error()
+    #@input_error()
     def add_record(self, args):
         name, *phones = args 
         record = self.find(name)
@@ -76,7 +76,7 @@ class AddressBook(UserDict):
             return "No upcoming birthdays."
         return "\n".join([f"{data['name']} - {data['congratulation_date']}" for data in upcoming_birthdays])
 
-    @input_error()
+    #@input_error()
     def add_email(self, args):
         name, email = args
         record = self.find(name)
@@ -84,6 +84,28 @@ class AddressBook(UserDict):
             return record
         record.add_email(email)
         return f"Email {email} was added to contact {name}."
+    
+    #@input_error()
+    def search(self, search_term):
+        # Convert search_term from list to string
+        search_term = " ".join(search_term) if isinstance(search_term, list) else search_term
+        search_results = []
+        search_lowered = search_term.lower().strip()
+
+        for record in self.data.values():
+            name_str = str(record.name.value).lower().strip()
+            phones_str = [str(phone).lower().strip() for phone in record.phones]
+            email_str = str(record.email).lower().strip() if record.email else ""
+
+            if (search_lowered in name_str or
+                any(search_lowered in phone for phone in phones_str) or
+                (record.email and search_lowered in email_str)):
+                search_results.append(record)
+
+        if search_results:
+            return "\n".join([str(record) for record in search_results])
+        else:
+            return "No matching records found."
 
     @input_error()
     def add_address(self, args):
