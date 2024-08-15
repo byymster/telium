@@ -116,10 +116,11 @@ class AddressBook(UserDict):
             name = str(record.name.value).lower().strip()
             phones = ' '.join(str(phone).lower().strip()
                               for phone in record.phones)
-            email = str(record.email).lower().strip() if record.email else ''
+            email = ' '.join(str(email).lower().strip()
+                              for email in record.email)
 
             # Concatenate all fields into a single string
-            combined_fields = f'{name} {phones} {email}'
+            combined_fields = f'{name}{phones}{email}'
 
             # Check if search term is in the concatenated string
             if search_lowered in combined_fields:
