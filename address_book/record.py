@@ -57,3 +57,10 @@ class Record(Printable):
             f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
             f'{birthday_data}{email_data}{address_data}'
         )
+
+
+DATA_TYPES = [
+    ('phone', Record.add_phone),
+    ('email', Record.add_email),
+    ('address', Record.add_address)
+]
