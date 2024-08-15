@@ -1,27 +1,29 @@
 from address_book.data_manager import DataManager
 from address_book.notes import NOT_FOUND_MESSAGE as NOTE_NOT_FOUND_MESSAGE
-from address_book.utils import DUMP_FILE
-from address_book.utils import parse_input
-from address_book.utils import pretty_print
-
+from address_book.utils import parse_input, pretty_print, DUMP_FILE
+from platformdirs import user_data_dir
+from pathlib import PurePath
 
 def main():
-    data_manager = DataManager(DUMP_FILE)
+    user_data_directory = user_data_dir("Telium", "Telium")
+    file_path = PurePath(user_data_directory).joinpath(DUMP_FILE)
+    
+    data_manager = DataManager(file_path)
     contacts, notes = data_manager.load_data()
-    print('Welcome to the assistant bot!')
+    print("Welcome to the assistant bot!")
     while True:
         try:
-            user_input = input('Enter a command: ')
+            user_input = input("Enter a command: ")
             command, *args = parse_input(user_input)
             match command:
-                case 'close' | 'exit':
-                    print('Good bye!')
+                case "close" | "exit":
+                    print("Good bye!")
                     break
-                case 'hello':
-                    print('How can I help you?')
-                case 'add':
+                case "hello":
+                    print("How can I help you?")
+                case "add":
                     print(contacts.add_record(args))
-                case 'change':
+                case "change":
                     print(contacts.change_record(*args))
                 case 'phone':
                     print(contacts.find(args[0]))
@@ -41,7 +43,7 @@ def main():
                 case 'add-note':
                     content = ''
                     while content == '':
-                        content = input('Enter note content: ')
+                        content = input("Enter note content: ")
                     print(notes.add_note(content))
                 case 'find-note':
                     pretty_print(notes.find(*args))
@@ -52,20 +54,19 @@ def main():
                 case 'all-notes-tags':
                     pretty_print(notes.all_tags())
                 case 'sort-notes':
-                    direction = args[0] if args else 'asc'
+                    direction = args[0] if args else "asc"
                     pretty_print(notes.sort_by_tags(direction))
                 case 'change-note':
                     change_gen = notes.change_note(args)
                     current_content = next(change_gen)
                     if current_content != NOTE_NOT_FOUND_MESSAGE:
-                        print(f'Current content: {current_content}')
-                        new_content = input('Enter new content: ')
+                        print(f"Current content: {current_content}")
+                        new_content = input("Enter new content: ")
                         print(change_gen.send(new_content))
                     else:
                         print(current_content)
                 case 'help':
-                    print(
-                        """
+                    print("""
                     Available commands:
                         hello - Greet the bot.
                         add <username> [phone] - Add a new contact. you can add more than one phone
@@ -76,24 +77,22 @@ def main():
                         add-email <username> <email> - Add email to a contact.
                         add-address <username> <your address with spaces> - Add address to a contact.
                         show-birthday <username> - Show birthday of a contact.
-                        birthdays <days> - Show upcoming birthdays. Default 7 days.
-                        add-note - Add a new note.
-                        find-note <needle> - Find notes containing a substring.
-                        delete-note <id> - Delete a note by title.
+                        birthdays <days> - Show upcoming birthdays, if <days> are empty it will show upcoming birthdays for 1 week.
+                        add-note - Add a new note. 
+                        find-note <needle> - Find notes containing a substring. 
+                        delete-note <id> - Delete a note by title. 
                         all-notes - List all notes.
                         all-notes-tags - List all unique tags.
                         sort-notes <direction> - Sort notes by tags in ascending or descending order.
-                    """
-                    )
+                    """)
                 case _:
-                    print('Invalid command.')
+                    print("Invalid command.")
         except ValueError as e:
             print(e)
         except KeyboardInterrupt:
-            print('\nGood bye!')
+            print("\nGood bye!")
             break
     data_manager.save_data(contacts.data, notes.data)
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
