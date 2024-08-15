@@ -1,5 +1,6 @@
 from address_book.data_manager import DataManager
 from address_book.notes import NOT_FOUND_MESSAGE as NOTE_NOT_FOUND_MESSAGE
+from address_book.record import DATA_TYPES
 from address_book.utils import DUMP_FILE
 from address_book.utils import parse_input
 from address_book.utils import pretty_print
@@ -20,7 +21,57 @@ def main():
                 case 'hello':
                     print('How can I help you?')
                 case 'add':
-                    print(contacts.add_record(args))
+                    if not args or len(args) != 1:
+                        raise ValueError(
+                            'Invalid argument, should be contact name.')
+                    name = args[0]
+                    add_gen = contacts.add_record_interactive(name)
+                    next(add_gen)
+                    prompt = False
+
+                    while True:
+                        user_input = input(
+                            f'Enter day of birth for {name} (dd.mm.yyyy): ')
+                        prompt = add_gen.send(user_input)
+                        if isinstance(prompt, ValueError):
+                            print(f'Error adding birthday: {str(prompt)}')
+                            add_gen.send(False)
+                            continue
+                        elif prompt:
+                            print(f'Added birthday {user_input} to {name}.')
+                            add_gen.send(True)
+                            break
+                        else:
+                            print(f'Birthday is skipped for {name}.')
+                            add_gen.send(True)
+                            break
+
+                    for data_type, _ in DATA_TYPES:
+                        while True:
+                            user_input = input(
+                                f'Would you like to add a {data_type} for {name}? (y/N): ').lower() == 'y'
+                            try:
+                                prompt = add_gen.send(user_input)
+                                if user_input:
+                                    user_input = input(f'Enter {data_type}: ')
+                                    prompt = add_gen.send(user_input)
+                                    if isinstance(prompt, ValueError):
+                                        print(
+                                            f'Error adding {data_type}: {str(prompt)}')
+                                        add_gen.send(True)
+                                        continue
+                                    else:
+                                        print(
+                                            f'Added {data_type} {user_input} to {name}.')
+                                else:
+                                    break
+                            except StopIteration as e:
+                                if e.value:
+                                    print(f'Contact {name} was added.')
+                                break
+
+                    if prompt:
+                        print(f'Contact {name} was added.')
                 case 'change':
                     print(contacts.change_record(*args))
                 case 'phone':

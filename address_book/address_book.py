@@ -3,6 +3,7 @@ from datetime import datetime
 from datetime import timedelta
 
 from .decorators import input_error
+from .record import DATA_TYPES
 from .record import Record
 
 
@@ -19,6 +20,43 @@ class AddressBook(UserDict):
             record.add_phone(phone)
 
         return f'Contact {record.name.value} was added.'
+
+    @input_error()
+    def add_record_interactive(self, name):
+        record = self.find(name)
+        if not isinstance(record, Record):
+            record = Record(name)
+            self.data[record.name.value] = record
+        should_exit = False
+
+        while should_exit is False:
+            birthday_data = yield
+            if birthday_data:
+                try:
+                    record.add_birthday(birthday_data)
+                    should_exit = yield True
+                except ValueError as e:
+                    yield e
+                    continue
+
+            else:
+                should_exit = yield False
+
+        for data_type, add_method in DATA_TYPES:
+            while True:
+                add_data = yield
+                if add_data:
+                    data = yield
+                    try:
+                        add_method(record, data)
+                    except ValueError as e:
+                        yield e
+                        continue
+                else:
+                    break
+
+        yield True
+        return True
 
     def find(self, name):
         return self.data.get(name, 'Contact not found')
