@@ -68,7 +68,7 @@ def main():
                         """
                     Available commands:
                         hello - Greet the bot.
-                        add <username> <phone> - Add a new contact.
+                        add <username> [phone] - Add a new contact. you can add more than one phone
                         change <username> <phone> - Change an existing contact.
                         phone <username> - Get phone number of a contact.
                         all - List all contacts.
