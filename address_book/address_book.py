@@ -117,7 +117,7 @@ class AddressBook(UserDict):
             phones = ' '.join(str(phone).lower().strip()
                               for phone in record.phones)
             email = ' '.join(str(email).lower().strip()
-                              for email in record.email)
+                             for email in record.email)
 
             # Concatenate all fields into a single string
             combined_fields = f'{name}{phones}{email}'
