@@ -1,5 +1,6 @@
 from src.decorators import create_command_register
 from src.notes import NOT_FOUND_MESSAGE
+from src.notes import Notes
 from src.utils import pretty_print
 
 NOTES_COMMAND_PREFIX = 'note'
@@ -8,7 +9,7 @@ notes_commands = create_command_register(NOTES_COMMAND_PREFIX)
 
 
 @notes_commands('add')
-def add(notes, *args):
+def add(notes: Notes):
     """<note> - Add a new note."""
     content = ''
     while content == '':
@@ -16,8 +17,8 @@ def add(notes, *args):
     print(notes.add_note(content))
 
 
-@notes_commands('change')
-def change(notes, *args):
+@notes_commands('edit')
+def edit(notes: Notes, *args):
     """<note_id> - Change a note by ID."""
     change_gen = notes.change_note(args)
     current_content = next(change_gen)
@@ -30,31 +31,31 @@ def change(notes, *args):
 
 
 @notes_commands('find')
-def find(notes, *args):
+def find(notes: Notes, *args):
     """<needle> - Find notes containing a substring. Use #text to find by tag"""
     pretty_print(notes.find(*args))
 
 
 @notes_commands('delete')
-def delete(notes, *args):
+def delete(notes: Notes, *args):
     """<note_id> - Delete a note by ID."""
     print(notes.delete(*args))
 
 
 @notes_commands('all')
-def all_notes(notes, *args):
+def all_notes(notes: Notes, *args):
     """- List all notes."""
     pretty_print(notes.all())
 
 
 @notes_commands('tags')
-def all_tags(notes, *args):
+def all_tags(notes: Notes, *args):
     """- List all tags."""
     pretty_print(notes.all_tags())
 
 
 @notes_commands('sort')
-def sort(notes, *args):
+def sort(notes: Notes, *args):
     """<asc|desc> - Sort notes by tags."""
     direction = args[0] if args else 'asc'
     pretty_print(notes.sort_by_tags(direction))

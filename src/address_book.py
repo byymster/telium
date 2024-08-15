@@ -6,6 +6,8 @@ from .decorators import input_error
 from .record import DATA_TYPES
 from .record import Record
 
+NOT_FOUND_MESSAGE = 'Contact not found.'
+
 
 class AddressBook(UserDict):
     @input_error()
@@ -20,6 +22,15 @@ class AddressBook(UserDict):
             record.add_phone(phone)
 
         return f'Contact {record.name.value} was added.'
+
+    @input_error()
+    def add_phone_to_contact(self, *args):
+        name, phone = args
+        record = self.find(name)
+        if not isinstance(record, Record):
+            return False
+        record.add_phone(phone)
+        return True
 
     @input_error()
     def add_record_interactive(self, name):
@@ -58,11 +69,14 @@ class AddressBook(UserDict):
         yield True
         return True
 
+    @input_error({KeyError: NOT_FOUND_MESSAGE})
+    def delete(self, *args):
+        contact_name = args[0]
+        del self.data[contact_name]
+        return f'Note {contact_name} was deleted.'
+
     def find(self, name):
         return self.data.get(name, 'Contact not found')
-
-    def delete(self, name):
-        del self.data[name]
 
     def get_upcoming_birthdays(self, days: int) -> list[dict[str, str]]:
         upcoming_birthdays = []
@@ -74,6 +88,12 @@ class AddressBook(UserDict):
                     '%d.%m.%Y',
                 )
                 difference = (birthday_this_year - today).days
+                if difference < 0:
+                    birthday_this_year = datetime.strptime(
+                        f'{user.birthday.value.day}.{user.birthday.value.month}.{today.year+1}',
+                        '%d.%m.%Y',
+                    )
+                    difference = (birthday_this_year - today).days
 
                 if 0 <= difference <= days:
                     if birthday_this_year.weekday() >= 5:
@@ -131,7 +151,7 @@ class AddressBook(UserDict):
         )
 
     @input_error()
-    def add_email(self, args):
+    def add_email(self, *args):
         name, email = args
         record = self.find(name)
         if not isinstance(record, Record):

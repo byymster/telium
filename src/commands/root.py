@@ -9,6 +9,7 @@ root_commands = create_command_register(ROOT_COMMAND_PREFIX)
 def help_command(*args):
     """- Display help information."""
     display_help()
+    return True
 
 
 @root_commands('exit')

@@ -3,6 +3,7 @@ from abc import abstractmethod
 from typing import List
 
 DUMP_FILE = 'telium_data.pkl'
+HISTORY_FILE = '.history'
 
 
 def parse_input(user_input):
