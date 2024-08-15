@@ -8,62 +8,62 @@ from address_book.utils import pretty_print
 def main():
     data_manager = DataManager(DUMP_FILE)
     contacts, notes = data_manager.load_data()
-    print("Welcome to the assistant bot!")
+    print('Welcome to the assistant bot!')
     while True:
         try:
-            user_input = input("Enter a command: ")
+            user_input = input('Enter a command: ')
             command, *args = parse_input(user_input)
             match command:
-                case "close" | "exit":
-                    print("Good bye!")
+                case 'close' | 'exit':
+                    print('Good bye!')
                     break
-                case "hello":
-                    print("How can I help you?")
-                case "add":
+                case 'hello':
+                    print('How can I help you?')
+                case 'add':
                     print(contacts.add_record(args))
-                case "change":
+                case 'change':
                     print(contacts.change_record(*args))
-                case "phone":
+                case 'phone':
                     print(contacts.find(args[0]))
-                case "all":
+                case 'all':
                     print(contacts.all())
-                case "add-birthday":
+                case 'add-birthday':
                     print(contacts.add_birthday(args))
-                case "show-birthday":
+                case 'show-birthday':
                     print(contacts.show_birthday(args))
-                case "birthdays":
+                case 'birthdays':
                     days = int(args[0]) if args else 7
                     print(contacts.birthdays(days))
-                case "add-email":
+                case 'add-email':
                     print(contacts.add_email(args))
-                case "add-address":
+                case 'add-address':
                     print(contacts.add_address(args))
-                case "add-note":
-                    content = ""
-                    while content == "":
-                        content = input("Enter note content: ")
+                case 'add-note':
+                    content = ''
+                    while content == '':
+                        content = input('Enter note content: ')
                     print(notes.add_note(content))
-                case "find-note":
+                case 'find-note':
                     pretty_print(notes.find(*args))
-                case "delete-note":
+                case 'delete-note':
                     print(notes.delete(*args))
-                case "all-notes":
+                case 'all-notes':
                     pretty_print(notes.all())
-                case "all-notes-tags":
+                case 'all-notes-tags':
                     pretty_print(notes.all_tags())
-                case "sort-notes":
-                    direction = args[0] if args else "asc"
+                case 'sort-notes':
+                    direction = args[0] if args else 'asc'
                     pretty_print(notes.sort_by_tags(direction))
-                case "change-note":
+                case 'change-note':
                     change_gen = notes.change_note(args)
                     current_content = next(change_gen)
                     if current_content != NOTE_NOT_FOUND_MESSAGE:
-                        print(f"Current content: {current_content}")
-                        new_content = input("Enter new content: ")
+                        print(f'Current content: {current_content}')
+                        new_content = input('Enter new content: ')
                         print(change_gen.send(new_content))
                     else:
                         print(current_content)
-                case "help":
+                case 'help':
                     print(
                         """
                     Available commands:
@@ -86,14 +86,14 @@ def main():
                     """
                     )
                 case _:
-                    print("Invalid command.")
+                    print('Invalid command.')
         except ValueError as e:
             print(e)
         except KeyboardInterrupt:
-            print("\nGood bye!")
+            print('\nGood bye!')
             break
     data_manager.save_data(contacts.data, notes.data)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

@@ -27,7 +27,7 @@ def input_error(errors=None):
         def inner(*args, **kwargs):
             try:
                 gen = func(*args, **kwargs)
-                if hasattr(gen, "__iter__") and hasattr(gen, "__next__"):
+                if hasattr(gen, '__iter__') and hasattr(gen, '__next__'):
                     return handle_generator(gen, combined_errors)
                 else:
                     return gen

@@ -2,7 +2,7 @@ from abc import ABC
 from abc import abstractmethod
 from typing import List
 
-DUMP_FILE = "telium_data.pkl"
+DUMP_FILE = 'telium_data.pkl'
 
 
 def parse_input(user_input):
@@ -19,5 +19,5 @@ class Printable(ABC):
 
 def pretty_print(arr: List[Printable]):
     if len(arr) == 0:
-        return print("Nothing found")
-    return print("\n".join(str(row) for row in arr))
+        return print('Nothing found')
+    return print('\n'.join(str(row) for row in arr))

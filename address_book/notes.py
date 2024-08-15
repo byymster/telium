@@ -3,7 +3,7 @@ from collections import UserList
 from address_book.decorators import input_error
 from address_book.utils import Printable
 
-NOT_FOUND_MESSAGE = "Note not found."
+NOT_FOUND_MESSAGE = 'Note not found.'
 
 
 class Note(Printable):
@@ -18,9 +18,9 @@ class Note(Printable):
     @classmethod
     def extract_hashtags(cls, content: str):
         return [
-            word.replace("#", "").lower()
+            word.replace('#', '').lower()
             for word in content.split()
-            if word.startswith("#")
+            if word.startswith('#')
         ]
 
 
@@ -37,7 +37,7 @@ class Notes(UserList):
     def find(self, needle: str = None):
         if not needle:
             return []
-        if needle.startswith("#"):
+        if needle.startswith('#'):
             needle = needle[1:].lower()
             return [note for note in self.data if needle.lower() in note.tags]
         return [note for note in self.data if needle.lower() in note.content.lower()]
@@ -45,7 +45,7 @@ class Notes(UserList):
     @input_error({IndexError: NOT_FOUND_MESSAGE})
     def delete(self, note_id: str):
         del self.data[int(note_id) - 1]
-        return f"Note {note_id} was deleted."
+        return f'Note {note_id} was deleted.'
 
     def all(self):
         return self.data
@@ -56,12 +56,12 @@ class Notes(UserList):
             tags.update(note.tags)
         return tags
 
-    def sort_by_tags(self, direction="asc"):
-        reverse = direction == "desc"
+    def sort_by_tags(self, direction='asc'):
+        reverse = direction == 'desc'
         return sorted(
             self.data,
             key=lambda note: sorted(note.tags, reverse=reverse)[
-                0] if note.tags else "",
+                0] if note.tags else '',
             reverse=reverse,
         )
 
@@ -73,4 +73,4 @@ class Notes(UserList):
         new_content = yield current_content
         note.content = new_content
         note.tags = Note.extract_hashtags(new_content)
-        yield f"Note {note_id} was updated."
+        yield f'Note {note_id} was updated.'

@@ -12,10 +12,10 @@ class AddressBook(UserDict):
         record = Record(args[0])
         record.add_phone(args[1])
         self.data[record.name.value] = record
-        return f"Contact {record.name.value} was added."
+        return f'Contact {record.name.value} was added.'
 
     def find(self, name):
-        return self.data.get(name, "Contact not found")
+        return self.data.get(name, 'Contact not found')
 
     def delete(self, name):
         del self.data[name]
@@ -26,8 +26,8 @@ class AddressBook(UserDict):
         for user in self.data.values():
             if user.birthday and user.birthday.value:
                 birthday_this_year = datetime.strptime(
-                    f"{user.birthday.value.day}.{user.birthday.value.month}.{today.year}",
-                    "%d.%m.%Y",
+                    f'{user.birthday.value.day}.{user.birthday.value.month}.{today.year}',
+                    '%d.%m.%Y',
                 )
                 difference = (birthday_this_year - today).days
 
@@ -38,9 +38,9 @@ class AddressBook(UserDict):
                         )
                     upcoming_birthdays.append(
                         {
-                            "name": user.name.value,
-                            "congratulation_date": birthday_this_year.strftime(
-                                "%d.%m.%Y"
+                            'name': user.name.value,
+                            'congratulation_date': birthday_this_year.strftime(
+                                '%d.%m.%Y'
                             ),
                         }
                     )
@@ -52,12 +52,12 @@ class AddressBook(UserDict):
         record = self.find(name)
         if isinstance(record, Record):
             record.edit_phone(old_phone, new_phone)
-            return f"Phone number {old_phone} was changed to {new_phone} for contact {name}."
+            return f'Phone number {old_phone} was changed to {new_phone} for contact {name}.'
         else:
             return record
 
     def all(self):
-        return "\n".join([str(data) for data in self.data.values()])
+        return '\n'.join([str(data) for data in self.data.values()])
 
     @input_error()
     def add_birthday(self, args):
@@ -66,20 +66,20 @@ class AddressBook(UserDict):
         if not isinstance(record, Record):
             return record
         record.add_birthday(birthday)
-        return f"Birthday {birthday} was added to contact {name}."
+        return f'Birthday {birthday} was added to contact {name}.'
 
     @input_error()
     def show_birthday(self, args):
         name = args[0]
         record = self.find(name)
-        return record.birthday.value.strftime("%d.%m.%Y")
+        return record.birthday.value.strftime('%d.%m.%Y')
 
     @input_error()
     def birthdays(self, args):
         upcoming_birthdays = self.get_upcoming_birthdays(args)
         if not upcoming_birthdays:
-            return "No upcoming birthdays."
-        return "\n".join(
+            return 'No upcoming birthdays.'
+        return '\n'.join(
             [
                 f"{data['name']} - {data['congratulation_date']}"
                 for data in upcoming_birthdays
@@ -93,12 +93,12 @@ class AddressBook(UserDict):
         if not isinstance(record, Record):
             return record
         record.add_email(email)
-        return f"Email {email} was added to contact {name}."
+        return f'Email {email} was added to contact {name}.'
 
     @input_error()
     def add_address(self, args):
         name = args[0]
-        address = " ".join(args[1:])
+        address = ' '.join(args[1:])
         record = self.find(name)
         if not isinstance(record, Record):
             return record
