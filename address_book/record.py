@@ -1,4 +1,8 @@
-from .fields import Name, Phone, Birthday, Email, Address
+from .fields import Address
+from .fields import Birthday
+from .fields import Email
+from .fields import Name
+from .fields import Phone
 from .utils import Printable
 
 
@@ -40,7 +44,16 @@ class Record(Printable):
         self.address.append(Address(address))
 
     def __str__(self):
-        birthday_data = f", birthday: {self.birthday}" if self.birthday else ""
-        email_data = f", email: {', '.join(p.value for p in self.email)}" if self.email else ""
-        address_data = f", address: {', '.join(p.value for p in self.address)}" if self.address else ""
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}{birthday_data}{email_data}{address_data}"
+        birthday_data = f', birthday: {self.birthday}' if self.birthday else ''
+        email_data = (
+            f", email: {', '.join(p.value for p in self.email)}" if self.email else ''
+        )
+        address_data = (
+            f", address: {', '.join(p.value for p in self.address)}"
+            if self.address
+            else ''
+        )
+        return (
+            f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
+            f'{birthday_data}{email_data}{address_data}'
+        )
