@@ -1,6 +1,8 @@
 from address_book.data_manager import DataManager
 from address_book.notes import NOT_FOUND_MESSAGE as NOTE_NOT_FOUND_MESSAGE
-from address_book.utils import parse_input, DUMP_FILE, pretty_print
+from address_book.utils import DUMP_FILE
+from address_book.utils import parse_input
+from address_book.utils import pretty_print
 
 
 def main():
@@ -21,38 +23,38 @@ def main():
                     print(contacts.add_record(args))
                 case "change":
                     print(contacts.change_record(*args))
-                case 'phone':
+                case "phone":
                     print(contacts.find(args[0]))
-                case 'all':
+                case "all":
                     print(contacts.all())
-                case 'add-birthday':
+                case "add-birthday":
                     print(contacts.add_birthday(args))
-                case 'show-birthday':
+                case "show-birthday":
                     print(contacts.show_birthday(args))
-                case 'birthdays':
+                case "birthdays":
                     days = int(args[0]) if args else 7
                     print(contacts.birthdays(days))
-                case 'add-email':
+                case "add-email":
                     print(contacts.add_email(args))
-                case 'add-address':
+                case "add-address":
                     print(contacts.add_address(args))
-                case 'add-note':
-                    content = ''
-                    while content == '':
+                case "add-note":
+                    content = ""
+                    while content == "":
                         content = input("Enter note content: ")
                     print(notes.add_note(content))
-                case 'find-note':
+                case "find-note":
                     pretty_print(notes.find(*args))
-                case 'delete-note':
+                case "delete-note":
                     print(notes.delete(*args))
-                case 'all-notes':
+                case "all-notes":
                     pretty_print(notes.all())
-                case 'all-notes-tags':
+                case "all-notes-tags":
                     pretty_print(notes.all_tags())
-                case 'sort-notes':
+                case "sort-notes":
                     direction = args[0] if args else "asc"
                     pretty_print(notes.sort_by_tags(direction))
-                case 'change-note':
+                case "change-note":
                     change_gen = notes.change_note(args)
                     current_content = next(change_gen)
                     if current_content != NOTE_NOT_FOUND_MESSAGE:
@@ -61,8 +63,9 @@ def main():
                         print(change_gen.send(new_content))
                     else:
                         print(current_content)
-                case 'help':
-                    print("""
+                case "help":
+                    print(
+                        """
                     Available commands:
                         hello - Greet the bot.
                         add <username> <phone> - Add a new contact.
@@ -73,14 +76,15 @@ def main():
                         add-email <username> <email> - Add email to a contact.
                         add-address <username> <your address with spaces> - Add address to a contact.
                         show-birthday <username> - Show birthday of a contact.
-                        birthdays <days> - Show upcoming birthdays, if <days> are empty it will show upcoming birthdays for 1 week.
-                        add-note - Add a new note. 
-                        find-note <needle> - Find notes containing a substring. 
-                        delete-note <id> - Delete a note by title. 
+                        birthdays <days> - Show upcoming birthdays. Default 7 days.
+                        add-note - Add a new note.
+                        find-note <needle> - Find notes containing a substring.
+                        delete-note <id> - Delete a note by title.
                         all-notes - List all notes.
                         all-notes-tags - List all unique tags.
                         sort-notes <direction> - Sort notes by tags in ascending or descending order.
-                    """)
+                    """
+                    )
                 case _:
                     print("Invalid command.")
         except ValueError as e:
@@ -89,6 +93,7 @@ def main():
             print("\nGood bye!")
             break
     data_manager.save_data(contacts.data, notes.data)
+
 
 if __name__ == "__main__":
     main()

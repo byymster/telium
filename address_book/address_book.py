@@ -1,7 +1,10 @@
 from collections import UserDict
-from .record import Record
+from datetime import datetime
+from datetime import timedelta
+
 from .decorators import input_error
-from datetime import datetime, timedelta
+from .record import Record
+
 
 class AddressBook(UserDict):
     @input_error()
@@ -23,16 +26,24 @@ class AddressBook(UserDict):
         for user in self.data.values():
             if user.birthday and user.birthday.value:
                 birthday_this_year = datetime.strptime(
-                    f'{user.birthday.value.day}.{user.birthday.value.month}.{today.year}', "%d.%m.%Y")
+                    f"{user.birthday.value.day}.{user.birthday.value.month}.{today.year}",
+                    "%d.%m.%Y",
+                )
                 difference = (birthday_this_year - today).days
 
                 if 0 <= difference <= days:
                     if birthday_this_year.weekday() >= 5:
-                        birthday_this_year += timedelta(days=(7 - birthday_this_year.weekday()))
-                    upcoming_birthdays.append({
-                        'name': user.name.value,
-                        'congratulation_date': birthday_this_year.strftime('%d.%m.%Y')
-                    })
+                        birthday_this_year += timedelta(
+                            days=(7 - birthday_this_year.weekday())
+                        )
+                    upcoming_birthdays.append(
+                        {
+                            "name": user.name.value,
+                            "congratulation_date": birthday_this_year.strftime(
+                                "%d.%m.%Y"
+                            ),
+                        }
+                    )
         return upcoming_birthdays
 
     @input_error()
@@ -61,14 +72,19 @@ class AddressBook(UserDict):
     def show_birthday(self, args):
         name = args[0]
         record = self.find(name)
-        return record.birthday.value.strftime('%d.%m.%Y')
+        return record.birthday.value.strftime("%d.%m.%Y")
 
     @input_error()
     def birthdays(self, args):
         upcoming_birthdays = self.get_upcoming_birthdays(args)
         if not upcoming_birthdays:
             return "No upcoming birthdays."
-        return "\n".join([f"{data['name']} - {data['congratulation_date']}" for data in upcoming_birthdays])
+        return "\n".join(
+            [
+                f"{data['name']} - {data['congratulation_date']}"
+                for data in upcoming_birthdays
+            ]
+        )
 
     @input_error()
     def add_email(self, args):

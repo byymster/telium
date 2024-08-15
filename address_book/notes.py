@@ -1,4 +1,5 @@
 from collections import UserList
+
 from address_book.decorators import input_error
 from address_book.utils import Printable
 
@@ -16,7 +17,11 @@ class Note(Printable):
 
     @classmethod
     def extract_hashtags(cls, content: str):
-        return [word.replace('#', '').lower() for word in content.split() if word.startswith("#")]
+        return [
+            word.replace("#", "").lower()
+            for word in content.split()
+            if word.startswith("#")
+        ]
 
 
 class Notes(UserList):
@@ -53,9 +58,12 @@ class Notes(UserList):
 
     def sort_by_tags(self, direction="asc"):
         reverse = direction == "desc"
-        return sorted(self.data,
-                      key=lambda note: sorted(note.tags, reverse=reverse)[0] if note.tags else "",
-                      reverse=reverse)
+        return sorted(
+            self.data,
+            key=lambda note: sorted(note.tags, reverse=reverse)[
+                0] if note.tags else "",
+            reverse=reverse,
+        )
 
     @input_error({IndexError: NOT_FOUND_MESSAGE})
     def change_note(self, args):

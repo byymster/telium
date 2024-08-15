@@ -1,6 +1,8 @@
 import pickle
+
 from .address_book import AddressBook
 from .notes import Notes
+
 
 class DataManager:
     def __init__(self, dump_file):
@@ -14,13 +16,12 @@ class DataManager:
                 notes = Notes(data.get("notes", {}))
                 return address_book, notes
         except FileNotFoundError:
-            print(f"No data file found at {self.dump_file}. Creating a new data structure.")
+            print(
+                f"No data file found at {self.dump_file}. Creating a new data structure."
+            )
             return AddressBook({}), Notes({})
 
     def save_data(self, address_book_data, notes_data):
-        data = {
-            "address_book": address_book_data,
-            "notes": notes_data
-        }
+        data = {"address_book": address_book_data, "notes": notes_data}
         with open(self.dump_file, "wb") as file:
             pickle.dump(data, file)
