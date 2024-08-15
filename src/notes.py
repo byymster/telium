@@ -1,7 +1,7 @@
 from collections import UserList
 
-from address_book.decorators import input_error
-from address_book.utils import Printable
+from src.decorators import input_error
+from src.utils import Printable
 
 NOT_FOUND_MESSAGE = 'Note not found.'
 
