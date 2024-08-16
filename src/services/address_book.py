@@ -1,10 +1,11 @@
 from collections import UserDict
 from datetime import datetime
 from datetime import timedelta
+from typing import List
 
-from .decorators import input_error
-from .record import DATA_TYPES
-from .record import Record
+from ..decorators import input_error
+from ..models import DATA_TYPES
+from ..models import Record
 
 NOT_FOUND_MESSAGE = 'Contact not found.'
 
@@ -160,7 +161,7 @@ class AddressBook(UserDict):
         return f'Email {email} was added to contact {name}.'
 
     @input_error()
-    def search(self, search_term):
+    def search(self, search_term) -> List[Record]:
         # Simplify conversion of search_term from list to string
         search_term = ' '.join(search_term) if isinstance(
             search_term, list) else search_term

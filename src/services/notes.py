@@ -1,27 +1,9 @@
 from collections import UserDict
 
-from src.decorators import input_error
-from src.utils import Printable
+from ..decorators import input_error
+from ..models import Note
 
-NOT_FOUND_MESSAGE = 'Note not found.'
-
-
-class Note(Printable):
-    def __init__(self, note_id: int, content: str):
-        self.id = note_id
-        self.content = content
-        self.tags = Note.extract_hashtags(content)
-
-    def __str__(self):
-        return f"#{self.id}, Content: {self.content}\n Tags: {', '.join(self.tags)}"
-
-    @classmethod
-    def extract_hashtags(cls, content: str):
-        return [
-            word.replace('#', '').lower()
-            for word in content.split()
-            if word.startswith('#')
-        ]
+NOTE_NOT_FOUND_MESSAGE = 'Note not found.'
 
 
 class Notes(UserDict):
@@ -35,15 +17,13 @@ class Notes(UserDict):
         return f"Note '{content}' was added."
 
     @input_error()
-    def find(self, needle: str = None):
-        if not needle:
-            return []
+    def find(self, needle: str = ''):
         if needle.startswith('#'):
             needle = needle[1:].lower()
             return [note for note in self.data.values() if needle.lower() in note.tags]
         return [note for note in self.data.values() if needle.lower() in note.content.lower()]
 
-    @input_error({KeyError: NOT_FOUND_MESSAGE})
+    @input_error({KeyError: NOTE_NOT_FOUND_MESSAGE})
     def delete(self, *args):
         note_id = args[0]
         del self.data[int(note_id)]
@@ -67,7 +47,7 @@ class Notes(UserDict):
             reverse=reverse,
         )
 
-    @input_error({IndexError: NOT_FOUND_MESSAGE})
+    @input_error({KeyError: NOTE_NOT_FOUND_MESSAGE, ValueError: NOTE_NOT_FOUND_MESSAGE})
     def change_note(self, args):
         note_id = int(args[0])
         note = self.data[note_id]
