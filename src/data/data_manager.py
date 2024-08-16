@@ -1,7 +1,7 @@
 import pickle
 
-from .address_book import AddressBook
-from .notes import Notes
+from ..services import AddressBook
+from ..services import Notes
 
 
 class DataManager:
@@ -19,6 +19,9 @@ class DataManager:
             print(
                 f'No data file found at {self.dump_file}. Creating a new data structure.'
             )
+            return AddressBook({}), Notes({})
+    #     For development - when change files structure or rename files
+        except ModuleNotFoundError:
             return AddressBook({}), Notes({})
 
     def save_data(self, address_book_data, notes_data):
