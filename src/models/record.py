@@ -1,9 +1,9 @@
-from src.dtos.address import Address
-from src.dtos.birthday import Birthday
-from src.dtos.email import Email
-from src.dtos.name import Name
-from src.dtos.phone import Phone
-from src.utils import Printable
+from ..dtos.address import Address
+from ..dtos.birthday import Birthday
+from ..dtos.email import Email
+from ..dtos.name import Name
+from ..dtos.phone import Phone
+from ..utils import Printable
 
 
 class Record(Printable):

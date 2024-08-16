@@ -1,4 +1,4 @@
-from src.utils import Printable
+from ..utils import Printable
 
 
 class Note(Printable):

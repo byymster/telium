@@ -1,14 +1,21 @@
-commands = {}
+class Command():
+    def __init__(self, func, completer=None):
+        self.func = func
+        self.completer = completer
 
+
+commands: dict[str, dict[str, Command]] = {}
 
 # Decorator to register commands
+
+
 def create_command_register(prefix):
     if prefix not in commands:
         commands[prefix] = {}
 
-    def register_command(name):
+    def register_command(name, completer=None):
         def decorator(func):
-            commands[prefix][name] = func
+            commands[prefix][name] = Command(func, completer)
             return func
 
         return decorator

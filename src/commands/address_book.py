@@ -1,7 +1,7 @@
-from src.decorators import create_command_register
-from src.models import DATA_TYPES
-from src.services import AddressBook
-from src.utils import pretty_print
+from ..decorators import create_command_register
+from ..models import DATA_TYPES
+from ..services import AddressBook
+from ..utils import pretty_print
 
 CONTACTS_COMMAND_PREFIX = 'contact'
 address_book_commands = create_command_register(CONTACTS_COMMAND_PREFIX)
@@ -69,20 +69,20 @@ def edit(contacts: AddressBook, *args):
     print(contacts.change_record(args))
 
 
-@address_book_commands('delete')
+@address_book_commands('delete', completer=AddressBook.search)
 def delete(contacts: AddressBook, *args):
     """<username> - Delete a contact."""
     print(contacts.delete(*args))
 
 
-@address_book_commands('phone')
+@address_book_commands('phone', completer=AddressBook.search)
 def phone(contacts: AddressBook, *args):
     """<username> - Get phone number of a contact."""
     print(contacts.get(*args))
 
 
 @address_book_commands('all')
-def all(contacts: AddressBook, *args):
+def all(contacts: AddressBook):
     """- List all contacts."""
     print(contacts.all())
 
@@ -93,7 +93,7 @@ def search(contacts: AddressBook, args):
     pretty_print(contacts.search(args))
 
 
-@address_book_commands('add-phone')
+@address_book_commands('add-phone', completer=AddressBook.search)
 def add_phone(contacts: AddressBook, *args):
     """<username> <phone> - Add phone to a contact."""
     result = contacts.add_phone_to_contact(*args)
@@ -107,13 +107,13 @@ def add_phone(contacts: AddressBook, *args):
 # Birthday Blok
 
 
-@address_book_commands('add-birthday')
+@address_book_commands('add-birthday', completer=AddressBook.search)
 def add_birthday(contacts: AddressBook, *args):
     """<username> <birthday> - Set birthday to a contact."""
     print(contacts.add_birthday(args))
 
 
-@address_book_commands('show-birthday')
+@address_book_commands('show-birthday', completer=AddressBook.search)
 def show_birthday(contacts: AddressBook, *args):
     """<username> - Show birthday of a contact."""
     print(contacts.show_birthday(args))
@@ -133,13 +133,13 @@ def birthdays(contacts: AddressBook, *args):
 # Email Blok
 
 
-@address_book_commands('add-email')
+@address_book_commands('add-email', completer=AddressBook.search)
 def add_email(contacts: AddressBook, *args):
     """<username> <email> - Add email to a contact."""
     print(contacts.add_email(*args))
 
 
-@address_book_commands('add-address')
+@address_book_commands('add-address', completer=AddressBook.search)
 def add_address(contacts: AddressBook, *args):
     """<username> <address> - Add address to a contact."""
     print(contacts.add_address(args))

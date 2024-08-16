@@ -1,7 +1,7 @@
-from src.decorators import create_command_register
-from src.services import NOTE_NOT_FOUND_MESSAGE
-from src.services import Notes
-from src.utils import pretty_print
+from ..decorators import create_command_register
+from ..services import NOTE_NOT_FOUND_MESSAGE
+from ..services import Notes
+from ..utils import pretty_print
 
 NOTES_COMMAND_PREFIX = 'note'
 
@@ -17,26 +17,29 @@ def add(notes: Notes):
     print(notes.add_note(content))
 
 
-@notes_commands('edit')
+@notes_commands('edit', completer=Notes.find)
 def edit(notes: Notes, *args):
     """<note_id> - Change a note by ID."""
-    change_gen = notes.change_note(args)
-    current_content = next(change_gen)
-    if current_content != NOTE_NOT_FOUND_MESSAGE:
-        print(f'Current content: {current_content}')
-        new_content = input('Enter new content: ')
-        print(change_gen.send(new_content))
-    else:
-        print(current_content)
+    try:
+        change_gen = notes.change_note(args)
+        current_content = next(change_gen)
+        if current_content != NOTE_NOT_FOUND_MESSAGE:
+            print(f'Current content: {current_content}')
+            new_content = input('Enter new content: ')
+            print(change_gen.send(new_content))
+        else:
+            print(current_content)
+    except StopIteration:
+        print('Opps, something went wrong.')
 
 
-@notes_commands('find')
-def find(notes: Notes, *args):
+@notes_commands('search')
+def search(notes: Notes, *args):
     """<needle> - Find notes containing a substring. Use #text to find by tag"""
     pretty_print(notes.find(*args))
 
 
-@notes_commands('delete')
+@notes_commands('delete', completer=Notes.find)
 def delete(notes: Notes, *args):
     """<note_id> - Delete a note by ID."""
     print(notes.delete(*args))
@@ -54,7 +57,7 @@ def all_tags(notes: Notes, *args):
     pretty_print(notes.all_tags())
 
 
-@notes_commands('sort')
+@notes_commands('sort', completer=lambda notes, _: ['asc', 'desc'])
 def sort(notes: Notes, *args):
     """<asc|desc> - Sort notes by tags."""
     direction = args[0] if args else 'asc'

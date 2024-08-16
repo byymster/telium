@@ -1,7 +1,7 @@
 from collections import UserDict
 
-from src.decorators import input_error
-from src.models import Note
+from ..decorators import input_error
+from ..models import Note
 
 NOTE_NOT_FOUND_MESSAGE = 'Note not found.'
 
@@ -17,9 +17,7 @@ class Notes(UserDict):
         return f"Note '{content}' was added."
 
     @input_error()
-    def find(self, needle: str = None):
-        if not needle:
-            return []
+    def find(self, needle: str = ''):
         if needle.startswith('#'):
             needle = needle[1:].lower()
             return [note for note in self.data.values() if needle.lower() in note.tags]
@@ -49,7 +47,7 @@ class Notes(UserDict):
             reverse=reverse,
         )
 
-    @input_error({IndexError: NOTE_NOT_FOUND_MESSAGE})
+    @input_error({KeyError: NOTE_NOT_FOUND_MESSAGE, ValueError: NOTE_NOT_FOUND_MESSAGE})
     def change_note(self, args):
         note_id = int(args[0])
         note = self.data[note_id]

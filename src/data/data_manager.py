@@ -1,7 +1,7 @@
 import pickle
 
-from src.services import AddressBook
-from src.services import Notes
+from ..services import AddressBook
+from ..services import Notes
 
 
 class DataManager:

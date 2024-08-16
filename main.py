@@ -7,6 +7,7 @@ from prompt_toolkit.completion import FuzzyCompleter
 from prompt_toolkit.history import FileHistory
 
 from src.commands import CommandCompleter
+from src.commands import create_binding
 from src.commands import handle_command
 from src.data.data_manager import DataManager
 from src.utils import DUMP_FILE
@@ -24,15 +25,21 @@ def main():
     contacts, notes = data_manager.load_data()
     print('Welcome to the assistant bot!')
 
+    command_completer = CommandCompleter(contacts, notes)
+    fuzzy_completer = FuzzyCompleter(command_completer, enable_fuzzy=True)
+    non_fuzzy_completer = FuzzyCompleter(command_completer, enable_fuzzy=False)
     session = PromptSession(
-        completer=FuzzyCompleter(CommandCompleter()),
+        completer=fuzzy_completer,
         history=FileHistory(
             PurePath(user_data_directory).joinpath(HISTORY_FILE))
     )
+
     while True:
         try:
-            user_input = session.prompt('Enter a command: ')
+            user_input = session.prompt('Enter a command: ',
+                                        key_bindings=create_binding(fuzzy_completer, non_fuzzy_completer))
             command, *args = parse_input(user_input)
+
             if not handle_command(command, contacts, notes, *args):
                 break
         except ValueError as e:
