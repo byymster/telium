@@ -1,4 +1,5 @@
 from ..decorators import create_command_register
+from ..dtos.base import ValidationError
 from ..models import DATA_TYPES
 from ..services import AddressBook
 from ..utils import pretty_print
@@ -22,7 +23,7 @@ def add(contacts: AddressBook, *args):
         user_input = input(
             f'Enter day of birth for {name} (dd.mm.yyyy): ')
         prompt = add_gen.send(user_input)
-        if isinstance(prompt, ValueError):
+        if isinstance(prompt, ValidationError):
             print(f'Error adding birthday: {str(prompt)}')
             add_gen.send(False)
             continue
@@ -44,7 +45,7 @@ def add(contacts: AddressBook, *args):
                 if user_input:
                     user_input = input(f'Enter {data_type}: ')
                     prompt = add_gen.send(user_input)
-                    if isinstance(prompt, ValueError):
+                    if isinstance(prompt, ValidationError):
                         print(
                             f'Error adding {data_type}: {str(prompt)}')
                         add_gen.send(True)
@@ -63,22 +64,20 @@ def add(contacts: AddressBook, *args):
         print(f'Contact {name} was added.')
 
 
-@address_book_commands('edit')
+@address_book_commands('edit', completer=AddressBook.search)
 def edit(contacts: AddressBook, *args):
-    """<username> <old_phone> <new_phone> - Change an existing contact."""
-    print(contacts.change_record(args))
-
-@address_book_commands('edit-name')
-def interactive_edit_name(self, old_name):
-    record = self.find(old_name)
-    if not record:
-        print(f"Contact '{old_name}' not found.")
+    """<username> - Change a name of an existing contact."""
+    edit_gen = contacts.edit_name(*args)
+    if not next(edit_gen):
+        print('Contact not found')
         return
+    new_name = input('Enter new name: ')
+    result = edit_gen.send(new_name)
+    if result:
+        print(f"Contact name changed from '{args[0]}' to '{new_name}'.")
+    else:
+        print('Contact name change was cancelled.')
 
-    new_name = yield "Enter new name: "
-    record.edit_name(new_name)
-    self.records[new_name] = self.records.pop(old_name)
-    print(f"Contact name changed from '{old_name}' to '{new_name}'.")
 
 @address_book_commands('edit-phone')
 def interactive_edit_phone(self, contact_name):
@@ -88,15 +87,16 @@ def interactive_edit_phone(self, contact_name):
         return
 
     while True:
-        self.list_items(record.phone, "phone")
+        self.list_items(record.phone, 'phone')
         index = yield from self.get_user_choice(len(record.phone))
-        new_phone = yield "Enter new phone: "
+        new_phone = yield 'Enter new phone: '
         try:
             record.edit_phone(index, new_phone)
-            print(f"Phone #{index + 1} was changed to {new_phone}.")
+            print(f'Phone #{index + 1} was changed to {new_phone}.')
             break
         except IndexError:
-            print("Invalid index. Please try again.")
+            print('Invalid index. Please try again.')
+
 
 @address_book_commands('edit-email')
 def interactive_edit_email(self, contact_name):
@@ -106,15 +106,16 @@ def interactive_edit_email(self, contact_name):
         return
 
     while True:
-        self.list_items(record.email, "email")
+        self.list_items(record.email, 'email')
         index = yield from self.get_user_choice(len(record.email))
-        new_email = yield "Enter new email: "
+        new_email = yield 'Enter new email: '
         try:
             record.edit_email(index, new_email)
-            print(f"Email #{index + 1} was changed to {new_email}.")
+            print(f'Email #{index + 1} was changed to {new_email}.')
             break
         except IndexError:
-            print("Invalid index. Please try again.")
+            print('Invalid index. Please try again.')
+
 
 @address_book_commands('edit-address')
 def interactive_edit_address(self, contact_name):
@@ -124,39 +125,42 @@ def interactive_edit_address(self, contact_name):
         return
 
     while True:
-        self.list_items(record.addresі, "addresі")
+        self.list_items(record.addresі, 'addresі')
         index = yield from self.get_user_choice(len(record.addresі))
-        new_address = yield "Enter new address: "
+        new_address = yield 'Enter new address: '
         try:
             record.edit_address(index, new_address)
-            print(f"Address #{index + 1} was changed to {new_address}.")
+            print(f'Address #{index + 1} was changed to {new_address}.')
             break
         except IndexError:
-            print("Invalid index. Please try again.")
+            print('Invalid index. Please try again.')
+
 
 def list_items(self, items, item_type):
     if not items:
-        print(f"No {item_type} available.")
+        print(f'No {item_type} available.')
         return
-    print(f"You have {len(items)} {item_type}:")
+    print(f'You have {len(items)} {item_type}:')
     for i, item in enumerate(items, start=1):
-        print(f"#{i} {item}")
+        print(f'#{i} {item}')
+
 
 def get_user_choice(self, max_choice):
     while True:
         try:
-            choice = int((yield "Choose an item: ")) - 1
+            choice = int((yield 'Choose an item: ')) - 1
             if 0 <= choice < max_choice:
                 yield choice
                 return
             else:
-                print(f"Please enter a number between 1 and {max_choice}.")
+                print(f'Please enter a number between 1 and {max_choice}.')
         except ValueError:
-            print("Please enter a valid number.")
+            print('Please enter a valid number.')
+
 
 def run_interactive(generator):
     try:
-        prompt = next(generator) 
+        prompt = next(generator)
         while True:
             user_input = input(prompt)
             prompt = generator.send(user_input)
@@ -179,7 +183,7 @@ def phone(contacts: AddressBook, *args):
 @address_book_commands('all')
 def all(contacts: AddressBook):
     """- List all contacts."""
-    print(contacts.all())
+    pretty_print(contacts.all())
 
 
 @address_book_commands('search')
@@ -238,4 +242,3 @@ def add_email(contacts: AddressBook, *args):
 def add_address(contacts: AddressBook, *args):
     """<username> <address> - Add address to a contact."""
     print(contacts.add_address(args))
-

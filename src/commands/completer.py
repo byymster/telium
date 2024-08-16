@@ -63,7 +63,7 @@ class CommandCompleter(Completer):
                 self.contacts if parts[0] == CONTACTS_COMMAND_PREFIX else self.notes, search_term)
 
             if len(completer) > 1 or (len(completer) == 1 and (
-                    not isinstance(completer[0], Record) or str(completer[0].name) != parts[2])):
+                    not isinstance(completer[0], Record) or len(parts) == 2 or str(completer[0].name) != parts[2])):
                 for completion in completer:
                     start_position = -len(parts[2] if len(parts) > 2 else '')
                     if isinstance(completion, Record):
