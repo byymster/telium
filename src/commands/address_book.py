@@ -79,93 +79,46 @@ def edit(contacts: AddressBook, *args):
         print('Contact name change was cancelled.')
 
 
-@address_book_commands('edit-phone')
-def interactive_edit_phone(self, contact_name):
-    record = self.find(contact_name)
-    if not record:
-        print(f"Contact '{contact_name}' not found.")
+@address_book_commands('edit-phone', completer=AddressBook.search)
+def interactive_edit_phone(contacts: AddressBook, *args):
+    """<username> - Change a phone number of an existing contact."""
+    return interactive_edit_list_data(contacts, args, 'phones')
+
+
+@address_book_commands('edit-email', completer=AddressBook.search)
+def interactive_edit_email(contacts: AddressBook, *args):
+    """<username> - Change an email number of an existing contact."""
+    return interactive_edit_list_data(contacts, args, 'email')
+
+
+@address_book_commands('edit-address', completer=AddressBook.search)
+def interactive_edit_address(contacts: AddressBook, *args):
+    """<username> - Change an address number of an existing contact."""
+    return interactive_edit_list_data(contacts, args, 'address')
+
+
+def interactive_edit_list_data(contacts: AddressBook, args, item_type):
+    edit_gen = contacts.edit_list_data(args, item_type)
+    items = next(edit_gen)
+    if items is False:
+        print('Contact not found')
         return
+    elif isinstance(items, str):
+        return print(items)
 
-    while True:
-        self.list_items(record.phone, 'phone')
-        index = yield from self.get_user_choice(len(record.phone))
-        new_phone = yield 'Enter new phone: '
-        try:
-            record.edit_phone(index, new_phone)
-            print(f'Phone #{index + 1} was changed to {new_phone}.')
-            break
-        except IndexError:
-            print('Invalid index. Please try again.')
+    print(f'{item_type.capitalize()}:')
+    print('\n'.join(f'#{i} {phone}' for i, phone in enumerate(items, start=1)))
+    option = input(f'Which {item_type} you want to edit? (enter number): ')
+    promt = edit_gen.send(int(option) - 1)
+    if promt is True:
+        new_phone = input(f'Enter new {item_type}: ')
+        promt = edit_gen.send(new_phone)
+        if promt is True:
+            print(f"{item_type.capitalize()} #{option} was changed to '{new_phone}'.")
+            return
+        return print(f'{promt}. Please try again.')
 
-
-@address_book_commands('edit-email')
-def interactive_edit_email(self, contact_name):
-    record = self.find(contact_name)
-    if not record:
-        print(f"Contact '{contact_name}' not found.")
-        return
-
-    while True:
-        self.list_items(record.email, 'email')
-        index = yield from self.get_user_choice(len(record.email))
-        new_email = yield 'Enter new email: '
-        try:
-            record.edit_email(index, new_email)
-            print(f'Email #{index + 1} was changed to {new_email}.')
-            break
-        except IndexError:
-            print('Invalid index. Please try again.')
-
-
-@address_book_commands('edit-address')
-def interactive_edit_address(self, contact_name):
-    record = self.find(contact_name)
-    if not record:
-        print(f"Contact '{contact_name}' not found.")
-        return
-
-    while True:
-        self.list_items(record.addresі, 'addresі')
-        index = yield from self.get_user_choice(len(record.addresі))
-        new_address = yield 'Enter new address: '
-        try:
-            record.edit_address(index, new_address)
-            print(f'Address #{index + 1} was changed to {new_address}.')
-            break
-        except IndexError:
-            print('Invalid index. Please try again.')
-
-
-def list_items(self, items, item_type):
-    if not items:
-        print(f'No {item_type} available.')
-        return
-    print(f'You have {len(items)} {item_type}:')
-    for i, item in enumerate(items, start=1):
-        print(f'#{i} {item}')
-
-
-def get_user_choice(self, max_choice):
-    while True:
-        try:
-            choice = int((yield 'Choose an item: ')) - 1
-            if 0 <= choice < max_choice:
-                yield choice
-                return
-            else:
-                print(f'Please enter a number between 1 and {max_choice}.')
-        except ValueError:
-            print('Please enter a valid number.')
-
-
-def run_interactive(generator):
-    try:
-        prompt = next(generator)
-        while True:
-            user_input = input(prompt)
-            prompt = generator.send(user_input)
-    except StopIteration:
-        pass
+    return print(f'{promt}. Please try again.')
 
 
 @address_book_commands('delete', completer=AddressBook.search)
@@ -203,8 +156,8 @@ def add_phone(contacts: AddressBook, *args):
     else:
         print(result)
 
-# Birthday Blok
 
+# Birthday Block
 
 @address_book_commands('add-birthday', completer=AddressBook.search)
 def add_birthday(contacts: AddressBook, *args):

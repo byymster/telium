@@ -89,6 +89,22 @@ class AddressBook(UserDict):
             yield True
             return True
 
+    @input_error({IndexError: 'No such  index'})
+    def edit_list_data(self, args, item_type):
+        username, = args
+        record = self.find(username)
+        if record is None:
+            yield False
+            return False
+        items = getattr(record, item_type)
+
+        option = yield items
+        if items[option]:
+            new_value = yield True
+            items[option].value = new_value
+            yield True
+            return True
+
     @input_error({KeyError: NOT_FOUND_MESSAGE})
     def delete(self, *args):
         contact_name = args[0]
