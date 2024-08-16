@@ -50,19 +50,19 @@ class Record(Printable):
         if 0 <= index < len(self.phones):
             self.phones[index] = new_phone
         else:
-            raise IndexError("Invalid phone index.")
+            raise IndexError('Invalid phone index.')
 
     def change_email(self, index, new_email):
         if 0 <= index < len(self.email):
             self.email[index] = new_email
         else:
-            raise IndexError("Invalid email index.")
+            raise IndexError('Invalid email index.')
 
     def change_address(self, index, new_address):
         if 0 <= index < len(self.address):
             self.address[index] = new_address
         else:
-            raise IndexError("Invalid address index.")
+            raise IndexError('Invalid address index.')
 
     def __str__(self):
         birthday_data = f', birthday: {self.birthday}' if self.birthday else ''
