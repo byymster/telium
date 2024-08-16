@@ -1,7 +1,7 @@
-from collections import UserList
+from collections import UserDict
 
-from address_book.decorators import input_error
-from address_book.utils import Printable
+from src.decorators import input_error
+from src.utils import Printable
 
 NOT_FOUND_MESSAGE = 'Note not found.'
 
@@ -24,13 +24,14 @@ class Note(Printable):
         ]
 
 
-class Notes(UserList):
+class Notes(UserDict):
     def __init__(self, data=None):
         super().__init__(data or [])
 
     def add_note(self, content):
-        note = Note(len(self.data) + 1, content)
-        self.data.append(note)
+        new_index = len(self.data.keys()) + 1
+        note = Note(new_index, content)
+        self.data[new_index] = note
         return f"Note '{content}' was added."
 
     @input_error()
@@ -39,27 +40,28 @@ class Notes(UserList):
             return []
         if needle.startswith('#'):
             needle = needle[1:].lower()
-            return [note for note in self.data if needle.lower() in note.tags]
-        return [note for note in self.data if needle.lower() in note.content.lower()]
+            return [note for note in self.data.values() if needle.lower() in note.tags]
+        return [note for note in self.data.values() if needle.lower() in note.content.lower()]
 
-    @input_error({IndexError: NOT_FOUND_MESSAGE})
-    def delete(self, note_id: str):
-        del self.data[int(note_id) - 1]
+    @input_error({KeyError: NOT_FOUND_MESSAGE})
+    def delete(self, *args):
+        note_id = args[0]
+        del self.data[int(note_id)]
         return f'Note {note_id} was deleted.'
 
     def all(self):
-        return self.data
+        return self.data.values()
 
     def all_tags(self):
         tags = set()
-        for note in self.data:
+        for note in self.data.values():
             tags.update(note.tags)
         return tags
 
     def sort_by_tags(self, direction='asc'):
         reverse = direction == 'desc'
         return sorted(
-            self.data,
+            self.data.values(),
             key=lambda note: sorted(note.tags, reverse=reverse)[
                 0] if note.tags else '',
             reverse=reverse,
@@ -68,9 +70,12 @@ class Notes(UserList):
     @input_error({IndexError: NOT_FOUND_MESSAGE})
     def change_note(self, args):
         note_id = int(args[0])
-        note = self.data[note_id - 1]
+        note = self.data[note_id]
         current_content = note.content
         new_content = yield current_content
+        if not new_content:
+            yield f'Note {note_id} was not updated.'
+            return
         note.content = new_content
         note.tags = Note.extract_hashtags(new_content)
         yield f'Note {note_id} was updated.'

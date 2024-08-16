@@ -13,7 +13,7 @@ def handle_generator(gen, combined_errors):
                 value = gen.send(sent_value)
             except StopIteration as e:
                 return e.value
-    except (ValueError, IndexError) as e:
+    except Exception as e:
         error_message = combined_errors.get(type(e), str(e))
         yield error_message
 
@@ -31,9 +31,39 @@ def input_error(errors=None):
                     return handle_generator(gen, combined_errors)
                 else:
                     return gen
-            except (ValueError, IndexError) as e:
+            except Exception as e:
+                # print(type(e))
                 return combined_errors.get(type(e), str(e))
-
         return inner
 
     return decorator
+
+
+commands = {}
+
+
+# Decorator to register commands
+def create_command_register(prefix):
+    if prefix not in commands:
+        commands[prefix] = {}
+
+    def register_command(name):
+        def decorator(func):
+            commands[prefix][name] = func
+            return func
+
+        return decorator
+
+    return register_command
+
+
+# Function to display help information
+def display_help():
+    print('Available commands:')
+    for name, subcommands in commands.items():
+        if isinstance(subcommands, dict):
+            for subname, func in subcommands.items():
+                print(
+                    f"{name+' ' if name != 'root' else ''}{subname} {func.__doc__}")
+        else:
+            print(f'{name}{subcommands.__doc__}')
