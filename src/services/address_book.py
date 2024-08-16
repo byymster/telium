@@ -4,6 +4,7 @@ from datetime import timedelta
 from typing import List
 
 from ..decorators import input_error
+from ..dtos.base import ValidationError
 from ..models import DATA_TYPES
 from ..models import Record
 
@@ -47,7 +48,7 @@ class AddressBook(UserDict):
                 try:
                     record.add_birthday(birthday_data)
                     should_exit = yield True
-                except ValueError as e:
+                except ValidationError as e:
                     yield e
                     continue
 
@@ -70,14 +71,48 @@ class AddressBook(UserDict):
         yield True
         return True
 
+    @input_error()
+    def edit_name(self, *args):
+        old_name, = args
+        result = self.find(old_name)
+        if result is None:
+            yield False
+            return False
+        else:
+            new_name = yield True
+        if not new_name:
+            yield False
+        else:
+            record = self.data.pop(old_name)
+            record.name.value = new_name
+            self.data[new_name] = record
+            yield True
+            return True
+
+    @input_error({IndexError: 'No such  index'})
+    def edit_list_data(self, args, item_type):
+        username, = args
+        record = self.find(username)
+        if record is None:
+            yield False
+            return False
+        items = getattr(record, item_type)
+
+        option = yield items
+        if items[option]:
+            new_value = yield True
+            items[option].value = new_value
+            yield True
+            return True
+
     @input_error({KeyError: NOT_FOUND_MESSAGE})
     def delete(self, *args):
         contact_name = args[0]
         del self.data[contact_name]
         return f'Note {contact_name} was deleted.'
 
-    def find(self, name):
-        return self.data.get(name, 'Contact not found')
+    def find(self, name) -> Record | None:
+        return self.data.get(name)
 
     def get_upcoming_birthdays(self, days: int) -> list[dict[str, str]]:
         upcoming_birthdays = []
@@ -91,7 +126,7 @@ class AddressBook(UserDict):
                 difference = (birthday_this_year - today).days
                 if difference < 0:
                     birthday_this_year = datetime.strptime(
-                        f'{user.birthday.value.day}.{user.birthday.value.month}.{today.year+1}',
+                        f'{user.birthday.value.day}.{user.birthday.value.month}.{today.year + 1}',
                         '%d.%m.%Y',
                     )
                     difference = (birthday_this_year - today).days
@@ -122,7 +157,7 @@ class AddressBook(UserDict):
             return record
 
     def all(self):
-        return '\n'.join([str(data) for data in self.data.values()])
+        return self.data.values()
 
     @input_error()
     def add_birthday(self, args):

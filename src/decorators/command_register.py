@@ -28,8 +28,8 @@ def display_help():
     print('Available commands:')
     for name, subcommands in commands.items():
         if isinstance(subcommands, dict):
-            for subname, func in subcommands.items():
+            for subname, cmd in subcommands.items():
                 print(
-                    f"{name+' ' if name != 'root' else ''}{subname} {func.__doc__}")
+                    f"{name+' ' if name != 'root' else ''}{subname} {cmd.func.__doc__}")
         else:
             print(f'{name}{subcommands.__doc__}')

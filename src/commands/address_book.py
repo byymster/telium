@@ -1,4 +1,5 @@
 from ..decorators import create_command_register
+from ..dtos.base import ValidationError
 from ..models import DATA_TYPES
 from ..services import AddressBook
 from ..utils import pretty_print
@@ -22,7 +23,7 @@ def add(contacts: AddressBook, *args):
         user_input = input(
             f'Enter day of birth for {name} (dd.mm.yyyy): ')
         prompt = add_gen.send(user_input)
-        if isinstance(prompt, ValueError):
+        if isinstance(prompt, ValidationError):
             print(f'Error adding birthday: {str(prompt)}')
             add_gen.send(False)
             continue
@@ -44,7 +45,7 @@ def add(contacts: AddressBook, *args):
                 if user_input:
                     user_input = input(f'Enter {data_type}: ')
                     prompt = add_gen.send(user_input)
-                    if isinstance(prompt, ValueError):
+                    if isinstance(prompt, ValidationError):
                         print(
                             f'Error adding {data_type}: {str(prompt)}')
                         add_gen.send(True)
@@ -63,10 +64,61 @@ def add(contacts: AddressBook, *args):
         print(f'Contact {name} was added.')
 
 
-@address_book_commands('edit')
+@address_book_commands('edit', completer=AddressBook.search)
 def edit(contacts: AddressBook, *args):
-    """<username> <old_phone> <new_phone> - Change an existing contact."""
-    print(contacts.change_record(args))
+    """<username> - Change a name of an existing contact."""
+    edit_gen = contacts.edit_name(*args)
+    if not next(edit_gen):
+        print('Contact not found')
+        return
+    new_name = input('Enter new name: ')
+    result = edit_gen.send(new_name)
+    if result:
+        print(f"Contact name changed from '{args[0]}' to '{new_name}'.")
+    else:
+        print('Contact name change was cancelled.')
+
+
+@address_book_commands('edit-phone', completer=AddressBook.search)
+def interactive_edit_phone(contacts: AddressBook, *args):
+    """<username> - Change a phone number of an existing contact."""
+    return interactive_edit_list_data(contacts, args, 'phones')
+
+
+@address_book_commands('edit-email', completer=AddressBook.search)
+def interactive_edit_email(contacts: AddressBook, *args):
+    """<username> - Change an email number of an existing contact."""
+    return interactive_edit_list_data(contacts, args, 'email')
+
+
+@address_book_commands('edit-address', completer=AddressBook.search)
+def interactive_edit_address(contacts: AddressBook, *args):
+    """<username> - Change an address number of an existing contact."""
+    return interactive_edit_list_data(contacts, args, 'address')
+
+
+def interactive_edit_list_data(contacts: AddressBook, args, item_type):
+    edit_gen = contacts.edit_list_data(args, item_type)
+    items = next(edit_gen)
+    if items is False:
+        print('Contact not found')
+        return
+    elif isinstance(items, str):
+        return print(items)
+
+    print(f'{item_type.capitalize()}:')
+    print('\n'.join(f'#{i} {phone}' for i, phone in enumerate(items, start=1)))
+    option = input(f'Which {item_type} you want to edit? (enter number): ')
+    promt = edit_gen.send(int(option) - 1)
+    if promt is True:
+        new_phone = input(f'Enter new {item_type}: ')
+        promt = edit_gen.send(new_phone)
+        if promt is True:
+            print(f"{item_type.capitalize()} #{option} was changed to '{new_phone}'.")
+            return
+        return print(f'{promt}. Please try again.')
+
+    return print(f'{promt}. Please try again.')
 
 
 @address_book_commands('delete', completer=AddressBook.search)
@@ -84,7 +136,7 @@ def phone(contacts: AddressBook, *args):
 @address_book_commands('all')
 def all(contacts: AddressBook):
     """- List all contacts."""
-    print(contacts.all())
+    pretty_print(contacts.all())
 
 
 @address_book_commands('search')
@@ -104,8 +156,8 @@ def add_phone(contacts: AddressBook, *args):
     else:
         print(result)
 
-# Birthday Blok
 
+# Birthday Block
 
 @address_book_commands('add-birthday', completer=AddressBook.search)
 def add_birthday(contacts: AddressBook, *args):
