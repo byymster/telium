@@ -1,9 +1,9 @@
-from .fields import Address
-from .fields import Birthday
-from .fields import Email
-from .fields import Name
-from .fields import Phone
-from .utils import Printable
+from src.dtos.address import Address
+from src.dtos.birthday import Birthday
+from src.dtos.email import Email
+from src.dtos.name import Name
+from src.dtos.phone import Phone
+from src.utils import Printable
 
 
 class Record(Printable):

@@ -1,6 +1,6 @@
 from src.decorators import create_command_register
-from src.notes import NOT_FOUND_MESSAGE
-from src.notes import Notes
+from src.services import NOTE_NOT_FOUND_MESSAGE
+from src.services import Notes
 from src.utils import pretty_print
 
 NOTES_COMMAND_PREFIX = 'note'
@@ -10,7 +10,7 @@ notes_commands = create_command_register(NOTES_COMMAND_PREFIX)
 
 @notes_commands('add')
 def add(notes: Notes):
-    """<note> - Add a new note."""
+    """- Add a new note."""
     content = ''
     while content == '':
         content = input('Enter note content: ')
@@ -22,7 +22,7 @@ def edit(notes: Notes, *args):
     """<note_id> - Change a note by ID."""
     change_gen = notes.change_note(args)
     current_content = next(change_gen)
-    if current_content != NOT_FOUND_MESSAGE:
+    if current_content != NOTE_NOT_FOUND_MESSAGE:
         print(f'Current content: {current_content}')
         new_content = input('Enter new content: ')
         print(change_gen.send(new_content))

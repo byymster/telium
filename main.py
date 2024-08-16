@@ -6,12 +6,9 @@ from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import FuzzyCompleter
 from prompt_toolkit.history import FileHistory
 
-from src.commands import address_book
-from src.commands import notes
-from src.commands import root
-from src.commands.completer import CommandCompleter
-from src.commands.handle import handle_command
-from src.data_manager import DataManager
+from src.commands import CommandCompleter
+from src.commands import handle_command
+from src.data.data_manager import DataManager
 from src.utils import DUMP_FILE
 from src.utils import HISTORY_FILE
 from src.utils import parse_input
@@ -49,6 +46,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# Fix for Flake8 F401 unused import
-c = {address_book, notes, root}

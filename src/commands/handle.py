@@ -1,6 +1,6 @@
-from src.commands.address_book import CONTACTS_COMMAND_PREFIX
-from src.commands.notes import NOTES_COMMAND_PREFIX
-from src.commands.root import ROOT_COMMAND_PREFIX
+from .address_book import CONTACTS_COMMAND_PREFIX
+from .notes import NOTES_COMMAND_PREFIX
+from .root import ROOT_COMMAND_PREFIX
 from src.decorators import commands
 
 

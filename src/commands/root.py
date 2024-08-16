@@ -1,6 +1,7 @@
 from src.decorators import create_command_register
 from src.decorators import display_help
 
+
 ROOT_COMMAND_PREFIX = 'root'
 root_commands = create_command_register(ROOT_COMMAND_PREFIX)
 

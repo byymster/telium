@@ -2,9 +2,9 @@ from collections import UserDict
 from datetime import datetime
 from datetime import timedelta
 
-from .decorators import input_error
-from .record import DATA_TYPES
-from .record import Record
+from src.decorators import input_error
+from src.models import DATA_TYPES
+from src.models import Record
 
 NOT_FOUND_MESSAGE = 'Contact not found.'
 

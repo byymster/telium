@@ -1,6 +1,6 @@
-from src.address_book import AddressBook
 from src.decorators import create_command_register
-from src.record import DATA_TYPES
+from src.models import DATA_TYPES
+from src.services import AddressBook
 from src.utils import pretty_print
 
 CONTACTS_COMMAND_PREFIX = 'contact'

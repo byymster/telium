@@ -1,7 +1,7 @@
 from prompt_toolkit.completion import Completer
 from prompt_toolkit.completion import Completion
 
-from src.commands.root import ROOT_COMMAND_PREFIX
+from .root import ROOT_COMMAND_PREFIX
 from src.decorators import commands
 
 
