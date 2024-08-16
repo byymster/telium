@@ -92,7 +92,7 @@ def create_binding(fuzzy_completer, non_fuzzy_completer):
         """
         b = event.app.current_buffer
         command = b.document.text_before_cursor
-        w = b.document.get_word_before_cursor()
+        w = command.split()[-1].strip()
         if should_enable_fuzzy(command):
             b.completer = fuzzy_completer
         else:
