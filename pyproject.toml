@@ -1,0 +1,46 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "telium"
+authors = [
+    { name = "Maks Burii" },
+    { name = "Heorhii Vazhnytskyi" },
+    { name = "Mykola Chabanov" },
+    { name = "Oleksii Malovichko" },
+]
+description = "A small contact manager"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+#dynamic = ["version"]
+version = "0.1.2"
+dependencies = [
+    "platformdirs==4.2.2",
+    "prompt_toolkit==3.0.47"
+]
+
+[project.urls]
+Homepage = "https://github.com/byymster/telium"
+Issues = "https://github.com/byymster/telium/issues"
+
+[project.scripts]
+telium = "telium.main:main"
+
+[tool]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "/.github",
+    "/.idea",
+    "/dist",
+    "/.pre-commit-config.yaml",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["telium/"]

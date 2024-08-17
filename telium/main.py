@@ -6,13 +6,13 @@ from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import FuzzyCompleter
 from prompt_toolkit.history import FileHistory
 
-from src.commands import CommandCompleter
-from src.commands import create_binding
-from src.commands import handle_command
-from src.data.data_manager import DataManager
-from src.utils import DUMP_FILE
-from src.utils import HISTORY_FILE
-from src.utils import parse_input
+from .commands import CommandCompleter
+from .commands import create_binding
+from .commands import handle_command
+from .data.data_manager import DataManager
+from .utils import DUMP_FILE
+from .utils import HISTORY_FILE
+from .utils import parse_input
 
 APP_NAME = 'Telium'
 
