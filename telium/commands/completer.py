@@ -92,16 +92,21 @@ def create_binding(fuzzy_completer, non_fuzzy_completer):
         """
         b = event.app.current_buffer
         command = b.document.text_before_cursor
-        w = command.split()[-1].strip()
+        w = command.split()[-1].strip() if len(command.split()) > 0 else ''
         if should_enable_fuzzy(command):
             b.completer = fuzzy_completer
         else:
             b.completer = non_fuzzy_completer
 
-        if b.complete_state and b.complete_state.completions[0].text != w:
+        completion_idx = b.complete_state.complete_index \
+            if b.complete_state and b.complete_state.complete_index is not None \
+            else 0
+        if b.complete_state and b.complete_state.completions[completion_idx].text != w:
             b.complete_next()
-        else:
+        elif not b.complete_state:
             b.start_completion(select_first=False)
+            b.insert_text(' ')
+        else:
             b.insert_text(' ')
 
     return bindings

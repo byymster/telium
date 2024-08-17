@@ -1,0 +1,3 @@
+hatch==1.12.0
+pydevd-pycharm==242.20224.347
+pre-commit==3.8.0

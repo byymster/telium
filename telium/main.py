@@ -18,6 +18,9 @@ APP_NAME = 'Telium'
 
 
 def main():
+    # import pydevd_pycharm
+    # pydevd_pycharm.settrace('localhost', port=8888, stdoutToServer=True, stderrToServer=True)
+
     user_data_directory = user_data_dir(APP_NAME, APP_NAME)
     makedirs(user_data_directory, exist_ok=True)
     file_path = PurePath(user_data_directory).joinpath(DUMP_FILE)
@@ -46,6 +49,9 @@ def main():
             print(e)
         except KeyboardInterrupt:
             print('\nGood bye!')
+            break
+        except EOFError:
+            print('Good bye!')
             break
 
     data_manager.save_data(contacts.data, notes.data)
