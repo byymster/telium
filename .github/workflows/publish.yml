@@ -17,7 +17,7 @@ jobs:
         run: hatch build
       - name: Publish on PyPI
 #        if: github.ref == 'refs/heads/main'
-#        env:
-#          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
-#          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        env:
+          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: hatch publish
