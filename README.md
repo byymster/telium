@@ -1,4 +1,10 @@
 # Telium
+## Installation
+Run `pip install telium`
+
+## Usage
+Run `telium` in the terminal after installation.
+Type `help` to see the list of commands.
 
 
 # For development
