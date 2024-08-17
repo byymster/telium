@@ -1,0 +1,23 @@
+name: Publish Python Package
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Hatch
+        run: pipx install hatch
+      - name: Build dist
+        run: hatch build
+      - name: Publish on PyPI
+#        if: github.ref == 'refs/heads/main'
+#        env:
+#          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
+#          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: hatch publish
