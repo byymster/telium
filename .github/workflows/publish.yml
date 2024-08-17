@@ -25,3 +25,4 @@ jobs:
         run: hatch build
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        if: github.ref == 'refs/heads/main'
