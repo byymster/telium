@@ -23,7 +23,9 @@ version = "0.2.0"
 dependencies = [
     "cryptography==43.0.0",
     "platformdirs==4.2.2",
-    "prompt_toolkit==3.0.47"
+    "prompt_toolkit==3.0.47",
+    "rich==13.7.1"
+
 ]
 
 [project.urls]
