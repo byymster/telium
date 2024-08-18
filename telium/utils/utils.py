@@ -1,14 +1,14 @@
 from abc import ABC
 from abc import abstractmethod
-from tkinter import Text
-from tkinter.ttk import Style
 from typing import List
 from typing import Optional
 from typing import TypedDict
 from typing import Union
 
 from rich.console import Console
+from rich.style import Style
 from rich.table import Table
+from rich.text import Text
 
 
 def parse_input(user_input):
