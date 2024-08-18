@@ -1,12 +1,10 @@
-class Command():
+class Command:
     def __init__(self, func, completer=None):
         self.func = func
         self.completer = completer
 
 
 commands: dict[str, dict[str, Command]] = {}
-
-# Decorator to register commands
 
 
 def create_command_register(prefix):
@@ -23,7 +21,6 @@ def create_command_register(prefix):
     return register_command
 
 
-# Function to display help information
 def display_help():
     print('Available commands:')
     for name, subcommands in commands.items():

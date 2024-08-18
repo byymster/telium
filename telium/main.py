@@ -1,18 +1,21 @@
 from os import makedirs
 from pathlib import PurePath
 
+from cryptography.fernet import InvalidToken
 from platformdirs import user_data_dir
+from prompt_toolkit import prompt
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import FuzzyCompleter
 from prompt_toolkit.history import FileHistory
 
-from .commands import CommandCompleter
-from .commands import create_binding
-from .commands import handle_command
-from .data.data_manager import DataManager
-from .utils import DUMP_FILE
-from .utils import HISTORY_FILE
-from .utils import parse_input
+from telium.commands import CommandCompleter
+from telium.commands import create_binding
+from telium.commands import handle_command
+from telium.data.data_manager import DataManager
+from telium.utils import DUMP_FILE
+from telium.utils import HISTORY_FILE
+from telium.utils import logo
+from telium.utils import parse_input
 
 APP_NAME = 'Telium'
 
@@ -21,12 +24,24 @@ def main():
     # import pydevd_pycharm
     # pydevd_pycharm.settrace('localhost', port=8888, stdoutToServer=True, stderrToServer=True)
 
+    print(logo)
+    print('Welcome to the assistant bot!')
     user_data_directory = user_data_dir(APP_NAME, APP_NAME)
     makedirs(user_data_directory, exist_ok=True)
     file_path = PurePath(user_data_directory).joinpath(DUMP_FILE)
-    data_manager = DataManager(file_path)
-    contacts, notes = data_manager.load_data()
-    print('Welcome to the assistant bot!')
+    decrypted = False
+    while not decrypted:
+        try:
+            passphrase = prompt(
+                'Please enter a passphrase: ', is_password=True)
+            data_manager = DataManager(file_path, passphrase)
+            contacts, notes = data_manager.load_data()
+            decrypted = True
+        except InvalidToken:
+            print('Invalid passphrase. Please try again')
+        except KeyboardInterrupt:
+            print('\nGood bye!')
+            return
 
     command_completer = CommandCompleter(contacts, notes)
     fuzzy_completer = FuzzyCompleter(command_completer, enable_fuzzy=True)

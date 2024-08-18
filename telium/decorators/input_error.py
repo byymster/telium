@@ -32,7 +32,6 @@ def input_error(errors=None):
                 else:
                     return gen
             except Exception as e:
-                # print(type(e))
                 return combined_errors.get(type(e), str(e))
         return inner
 

@@ -9,7 +9,7 @@ notes_commands = create_command_register(NOTES_COMMAND_PREFIX)
 
 
 @notes_commands('add')
-def add(notes: Notes):
+def add(notes: Notes, *args):
     """- Add a new note."""
     content = ''
     while content == '':

@@ -7,9 +7,8 @@ def parse_input(user_input):
     parts = user_input.strip().split()
     if not parts:
         raise ValueError('No command entered.')
-    # Join the first two parts to form the command
     cmd = ' '.join(parts[:2]).lower()
-    args = parts[2:]  # The rest are arguments
+    args = parts[2:]
     return cmd, *args
 
 

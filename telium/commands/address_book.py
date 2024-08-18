@@ -134,13 +134,13 @@ def phone(contacts: AddressBook, *args):
 
 
 @address_book_commands('all')
-def all(contacts: AddressBook):
+def all(contacts: AddressBook, *args):
     """- List all contacts."""
     pretty_print(contacts.all())
 
 
 @address_book_commands('search')
-def search(contacts: AddressBook, args):
+def search(contacts: AddressBook, *args):
     """<needle> - Find contacts containing a substring."""
     pretty_print(contacts.search(args))
 
@@ -156,8 +156,6 @@ def add_phone(contacts: AddressBook, *args):
     else:
         print(result)
 
-
-# Birthday Block
 
 @address_book_commands('add-birthday', completer=AddressBook.search)
 def add_birthday(contacts: AddressBook, *args):
@@ -181,8 +179,6 @@ def birthdays(contacts: AddressBook, *args):
     else:
         print(
             '\n'.join(f"{bd['name']} - {bd['congratulation_date']}" for bd in bds))
-
-# Email Blok
 
 
 @address_book_commands('add-email', completer=AddressBook.search)

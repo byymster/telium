@@ -197,26 +197,21 @@ class AddressBook(UserDict):
 
     @input_error()
     def search(self, search_term) -> List[Record]:
-        # Simplify conversion of search_term from list to string
         search_term = ' '.join(search_term) if isinstance(
             search_term, list) else search_term
 
         search_results = []
-        # Convert search term to lowercase and strip whitespace
         search_lowered = search_term.lower().strip()
 
         for record in self.data.values():
-            # Create variables for each field
             name = str(record.name.value).lower().strip()
             phones = ' '.join(str(phone).lower().strip()
                               for phone in record.phones)
             email = ' '.join(str(email).lower().strip()
                              for email in record.email)
 
-            # Concatenate all fields into a single string
             combined_fields = f'{name}{phones}{email}'
 
-            # Check if search term is in the concatenated string
             if search_lowered in combined_fields:
                 search_results.append(record)
 
