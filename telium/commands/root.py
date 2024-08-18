@@ -1,6 +1,6 @@
 from ..decorators import create_command_register
 from ..decorators import display_help
-
+from ..views.success import print_success
 
 ROOT_COMMAND_PREFIX = 'root'
 root_commands = create_command_register(ROOT_COMMAND_PREFIX)
@@ -17,5 +17,5 @@ def help_command(*args):
 @root_commands('close')
 def exit_command(*args):
     """- Exit the application."""
-    print('Good bye!')
+    print_success('Good bye!')
     return False

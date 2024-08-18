@@ -62,7 +62,7 @@ class AddressBook(UserDict):
                     data = yield
                     try:
                         add_method(record, data)
-                    except ValueError as e:
+                    except ValidationError as e:
                         yield e
                         continue
                 else:
@@ -156,8 +156,8 @@ class AddressBook(UserDict):
         else:
             return record
 
-    def all(self):
-        return self.data.values()
+    def all(self) -> list[Record]:
+        return list(self.data.values())
 
     @input_error()
     def add_birthday(self, args):
