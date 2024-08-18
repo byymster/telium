@@ -17,7 +17,6 @@ class Birthday(Field):
         try:
             if (date - datetime.now().date()).days > 0:
                 raise ValidationError('Birthday cannot be from future.')
-            # DoB can't be more than 100 years ago
             if (datetime.now().date() - date).days > 365 * 100:
                 raise ValidationError(
                     'Birthday cannot be more than 100 years ago.')

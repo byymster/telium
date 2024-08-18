@@ -4,9 +4,10 @@ from ..dtos.email import Email
 from ..dtos.name import Name
 from ..dtos.phone import Phone
 from ..utils import Printable
+from ..utils import RichPrintable
 
 
-class Record(Printable):
+class Record(Printable, RichPrintable):
     def __init__(self, name):
         self.name = Name(name)
         self.phones = []
@@ -77,6 +78,19 @@ class Record(Printable):
         return (
             f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
             f'{birthday_data}{email_data}{address_data}'
+        )
+
+    def __rich__(self, table, bg_color=None):
+        table.add_row(
+            str(self.name),
+            str(self.birthday) if self.birthday else '',
+            ', '.join(str(phone)
+                      for phone in self.phones) if self.phones else '',
+            ', '.join(str(email)
+                      for email in self.email) if self.email else '',
+            ', '.join(str(address)
+                      for address in self.address) if self.address else '',
+            style=f'on {bg_color}' if bg_color else None
         )
 
 
